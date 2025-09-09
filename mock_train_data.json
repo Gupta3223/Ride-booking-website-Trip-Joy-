@@ -1,0 +1,255 @@
+[
+  {
+    "trainName": "Rajdhani Express",
+    "trainNumber": "12301",
+    "from": "Delhi",
+    "to": "Mumbai",
+    "type": "Rajdhani",
+    "departure": "17:30",
+    "arrival": "08:15",
+    "duration": "14h 45m",
+    "days": [
+      "Mon",
+      "Wed",
+      "Fri"
+    ],
+    "classes": {
+      "SL": {
+        "fare": 900,
+        "availableSeats": 20
+      },
+      "3A": {
+        "fare": 1800,
+        "availableSeats": 8
+      },
+      "2A": {
+        "fare": 2500,
+        "availableSeats": 5
+      },
+      "1A": {
+        "fare": 3500,
+        "availableSeats": 2
+      }
+    }
+  },
+  {
+    "trainName": "Deccan Express",
+    "trainNumber": "11007",
+    "from": "Mumbai",
+    "to": "Pune",
+    "type": "Express",
+    "departure": "07:00",
+    "arrival": "10:30",
+    "duration": "3h 30m",
+    "days": [
+      "Daily"
+    ],
+    "classes": {
+      "SL": {
+        "fare": 200,
+        "availableSeats": 50
+      },
+      "CC": {
+        "fare": 350,
+        "availableSeats": 20
+      }
+    }
+  },
+  {
+    "trainName": "Shatabdi Express",
+    "trainNumber": "12028",
+    "from": "Bangalore",
+    "to": "Chennai",
+    "type": "Shatabdi",
+    "departure": "06:00",
+    "arrival": "11:00",
+    "duration": "5h",
+    "days": [
+      "Daily"
+    ],
+    "classes": {
+      "CC": {
+        "fare": 750,
+        "availableSeats": 25
+      },
+      "2S": {
+        "fare": 250,
+        "availableSeats": 100
+      }
+    }
+  },
+  {
+    "trainName": "Duronto Express",
+    "trainNumber": "12246",
+    "from": "Kolkata",
+    "to": "Delhi",
+    "type": "Duronto",
+    "departure": "16:00",
+    "arrival": "08:00",
+    "duration": "16h",
+    "days": [
+      "Tue",
+      "Thu",
+      "Sat"
+    ],
+    "classes": {
+      "3A": {
+        "fare": 1950,
+        "availableSeats": 10
+      },
+      "2A": {
+        "fare": 2650,
+        "availableSeats": 4
+      },
+      "1A": {
+        "fare": 3900,
+        "availableSeats": 1
+      }
+    }
+  },
+  {
+    "trainName": "Godavari Express",
+    "trainNumber": "12727",
+    "from": "Hyderabad",
+    "to": "Vizag",
+    "type": "Express",
+    "departure": "17:00",
+    "arrival": "06:00",
+    "duration": "13h",
+    "days": [
+      "Daily"
+    ],
+    "classes": {
+      "SL": {
+        "fare": 400,
+        "availableSeats": 40
+      },
+      "3A": {
+        "fare": 1000,
+        "availableSeats": 15
+      },
+      "2A": {
+        "fare": 1400,
+        "availableSeats": 5
+      }
+    }
+  },
+  {
+    "trainName": "Ajmer Shatabdi",
+    "trainNumber": "12015",
+    "from": "Jaipur",
+    "to": "Delhi",
+    "type": "Intercity",
+    "departure": "06:10",
+    "arrival": "10:40",
+    "duration": "4h 30m",
+    "days": [
+      "Mon",
+      "Tue",
+      "Thu",
+      "Sat"
+    ],
+    "classes": {
+      "SL": {
+        "fare": 220,
+        "availableSeats": 30
+      },
+      "CC": {
+        "fare": 480,
+        "availableSeats": 12
+      }
+    }
+  },
+  {
+    "trainName": "Ernakulam Express",
+    "trainNumber": "12678",
+    "from": "Kochi",
+    "to": "Bangalore",
+    "type": "Superfast",
+    "departure": "19:00",
+    "arrival": "07:30",
+    "duration": "12h 30m",
+    "days": [
+      "Daily"
+    ],
+    "classes": {
+      "SL": {
+        "fare": 520,
+        "availableSeats": 25
+      },
+      "3A": {
+        "fare": 1350,
+        "availableSeats": 10
+      }
+    }
+  },
+  {
+    "trainName": "Patna Intercity",
+    "trainNumber": "13233",
+    "from": "Patna",
+    "to": "Varanasi",
+    "type": "Express",
+    "departure": "14:30",
+    "arrival": "19:00",
+    "duration": "4h 30m",
+    "days": [
+      "Daily"
+    ],
+    "classes": {
+      "SL": {
+        "fare": 160,
+        "availableSeats": 60
+      },
+      "2S": {
+        "fare": 90,
+        "availableSeats": 100
+      }
+    }
+  },
+  {
+    "trainName": "Lucknow MEMU",
+    "trainNumber": "64201",
+    "from": "Lucknow",
+    "to": "Kanpur",
+    "type": "MEMU",
+    "departure": "08:00",
+    "arrival": "09:30",
+    "duration": "1h 30m",
+    "days": [
+      "Daily"
+    ],
+    "classes": {
+      "2S": {
+        "fare": 30,
+        "availableSeats": 150
+      }
+    }
+  },
+  {
+    "trainName": "Gujarat Intercity",
+    "trainNumber": "19016",
+    "from": "Ahmedabad",
+    "to": "Surat",
+    "type": "Intercity",
+    "departure": "06:45",
+    "arrival": "10:30",
+    "duration": "3h 45m",
+    "days": [
+      "Daily"
+    ],
+    "classes": {
+      "SL": {
+        "fare": 160,
+        "availableSeats": 35
+      },
+      "3A": {
+        "fare": 600,
+        "availableSeats": 10
+      },
+      "CC": {
+        "fare": 430,
+        "availableSeats": 15
+      }
+    }
+  }
+]

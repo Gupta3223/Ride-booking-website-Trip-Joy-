@@ -1,0 +1,1614 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url('backgrounds.jpg') no-repeat center fixed;
+    background-size: contain;
+}
+
+
+/* Navigation Bar */
+.navbar {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 99;
+}
+
+.logo {
+    font-size: 2em;
+    color: #fff;
+    user-select: none;
+}
+.logo img {
+    width: 150px; /* Adjust size as needed */
+    height: auto;
+    border-radius: 60px;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 50px;
+}
+
+.navbar a {
+    position: relative;
+    font-size: 1.1em;
+    color: orangered;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.navbar a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    height: 3px;
+    background: orangered;
+    border-radius: 5px;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform 0.5s;
+}
+
+.navbar a:hover::after {
+    transform-origin: left;
+    transform: scaleX(1);
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 30px; /* spacing between nav links and login */
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  align-items: center; /* Ensures vertical alignment of links */
+  margin: 0;
+  padding: 0;
+}
+
+/* Login Button */
+.login-btn {
+    width: 130px;
+    height: 50px;
+    background: transparent;
+    border: 2px solid orangered;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: orangered;
+    font-weight: 500;
+    transition: 0.5s;
+}
+
+.login-btn:hover {
+    background: orangered;
+    color: white;
+}
+
+.user-menu-container {
+    position: relative;
+}
+
+.user-icon {
+    width: 40px;
+    height: 40px;
+    background-color: orange;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.user-icon i {
+    pointer-events: none;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 160px;
+    z-index: 1000;
+}
+
+.dropdown-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown-menu li {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f2f2f2;
+}
+
+.hidden {
+    display: none;
+}
+
+.ride-booking {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    margin-top: 120px; /* Adjust to position below navbar */
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.input-box input {
+    border: none;
+    background: none;
+    flex: 1;
+    padding-left: 10px;
+    outline: none;
+    font-size: 16px;
+}
+
+.icon {
+    color: #000;
+    font-size: 18px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.black-btn {
+    background: black;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.gray-btn {
+    background: lightgray;
+    color: black;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 150px 20px;
+    color: black;
+}
+
+.booking-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.book-btn {
+    padding: 10px 20px;
+    border: none;
+    background: #ff5722;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 1.1em;
+    border-radius: 5px;
+}
+
+.book-btn i {
+    margin-right: 8px;
+}
+
+.book-btn:hover {
+    background: #e64a19;
+}
+
+/* Fare Pop-up Styles */
+.fare-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    max-width: 400px;
+    width: 90%;
+    padding: 20px;
+    text-align: center;
+    animation: pop-in 0.3s ease;
+}
+
+.popup-content h2 {
+    color: orangered;
+    margin-bottom: 10px;
+}
+
+.popup-content h3 {
+    color: #333;
+    font-size: 2em;
+}
+
+.popup-content p {
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.close-popup {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5em;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-popup:hover {
+    color: orangered;
+}
+
+/* Pop-in Animation */
+@keyframes pop-in {
+    0% {
+        transform: translate(-50%, -60%);
+        opacity: 0;
+    }
+    100% {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+    }
+}
+
+/* About and Contact Sections */
+section {
+    width: 100%;
+    padding: 50px;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.9);
+    margin: 20px 0;
+}
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 10000; /* On top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.5); /* Dim background */
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Form Elements in Modal */
+.modal-content input,
+.modal-content select,
+.modal-content button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Button Styling */
+.modal-content button {
+    background: #ff5722;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.1em;
+    border-radius: 5px;
+}
+
+.modal-content button:hover {
+    background: #e64a19;
+}
+
+/* Close Button Styling */
+.close {
+    float: right;
+    cursor: pointer;
+    font-size: 1.5em;
+    color: #555;
+}
+
+.close:hover {
+    color: #ff5722;
+}
+
+/* Checkbox Container */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-container input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox-container label {
+    font-size: 1em;
+    cursor: pointer;
+}
+
+/* Ensure Input Fields in Modal are properly spaced */
+.modal-content input[type="text"],
+.modal-content input[type="email"],
+.modal-content input[type="password"],
+.modal-content input[type="date"],
+.modal-content select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Register Form Specific */
+#register-modal form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Adjust the register modal for responsive sizes */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 80%; /* Ensure it fits smaller screens */
+    }
+}
+
+/*train booking*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: url('backgrounds.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  padding: 50px 20px;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 1100px;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section h2 {
+  font-size: 1.8em;
+  color: orangered;
+  margin-bottom: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+td, th {
+  padding: 10px;
+  text-align: left;
+}
+
+/*train payment*/
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="tel"],
+select {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="tel"]:focus,
+select:focus {
+  border-color: orangered;
+  background: #fff;
+}
+
+button {
+  background: orangered;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s;
+  margin-top: 10px;
+}
+
+button:hover {
+  background: #e64a19;
+}
+
+.options {
+  margin-top: 30px;
+}
+
+.options h3 {
+  font-size: 1.3em;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.options input[type="checkbox"],
+.options input[type="radio"] {
+  margin-right: 8px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.actions button {
+  width: 120px;
+}
+
+div > input[type="tel"] {
+  margin-top: 10px;
+  width: 300px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+thead {
+  background: #f1f1f1;
+}
+
+th {
+  color: #555;
+  font-weight: 500;
+}
+
+#barcode {
+  display: block;
+  margin: 20px auto;
+}
+
+
+/*bus result*/
+.results-section {
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.results-section h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.results-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.bus-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.bus-card:hover {
+    transform: translateY(-5px);
+}
+
+.bus-card h2 {
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.bus-card p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.book-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #222;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.aisle {
+  width: 40px;
+}
+
+.book-btn:hover {
+    background-color: orangered;
+}
+
+#barcode {
+  display: block;
+  margin: 20px auto;
+}
+
+/* flight.css */
+.flight-booking {
+  padding: 60px 20px;
+  background-color: #f0f8ff;
+  text-align: center;
+}
+
+.flight-booking .container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.flight-booking h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.flight-booking p {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.flight-form .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.input-box {
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.input-box label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color:#222;
+}
+
+.input-box input,
+.input-box select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.passenger-selector {
+  position: relative;
+  width: 100%;
+}
+
+  #passenger-toggle {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background: #f9f9f9;
+    cursor: pointer;
+  }
+
+  .passenger-popup {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .passenger-popup label {
+    display: block;
+    margin: 10px 0;
+    font-size: 14px;
+    color: #222;
+  }
+
+  .passenger-popup input[type="number"] {
+    width: 60px;
+    margin-left: 10px;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .passenger-popup .note {
+    font-size: 12px;
+    color: #555;
+    margin-top: 10px;
+  }
+
+  .passenger-popup button {
+    margin-top: 10px;
+    background: orangered;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .passenger-popup.hidden {
+    display: none;
+  }
+
+.button-container {
+  text-align: center;
+}
+
+.black-btn {
+  padding: 12px 30px;
+  background-color: #222;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.black-btn:hover {
+  background-color: orangered;
+}
+
+.results-container {
+  margin-top: 30px;
+}
+
+.submit-btn:hover {
+  background-color: orangered;
+}
+.flight-card-horizontal {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: 2px solid black;
+  padding: 20px 25px;
+  border-radius: 8px;
+  background: white;
+  margin: 20px 0;
+  min-height: 160px;
+}
+
+.flight-card-horizontal .left-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.flight-card-horizontal .row {
+  margin-bottom: 5px;
+  font-size: 15px;
+  color: #222;
+}
+
+.flight-card-horizontal .right-section {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.flight-card-horizontal .book-btn {
+  border: 2px solid none;
+  padding: 8px 16px;
+  background: #222;
+  color: white;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.flight-card-horizontal .book-btn:hover {
+  background: orangered;
+  color: white;
+}
+
+/*flight-booking*/
+.class-selection-container {
+  margin-top: 40px;
+  text-align: left;
+}
+
+.class-selection-container h2 {
+  color: orangered;
+  font-size: 1.6em;
+  margin-bottom: 20px;
+}
+
+.class-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.class-card {
+  flex: 1 1 280px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid #ccc;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.class-card:hover {
+  transform: translateY(-5px);
+  border-color: orangered;
+}
+
+.class-card h3 {
+  font-size: 1.3em;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.class-card .fare {
+  color: #0066cc;
+  font-weight: 600;
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+
+.class-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.class-card ul li {
+  color: #444;
+  font-size: 0.95em;
+  margin-bottom: 6px;
+  padding-left: 16px;
+  position: relative;
+}
+
+.class-card ul li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: orangered;
+  font-weight: bold;
+}
+
+.class-card .select-btn {
+  background-color: orangered;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.class-card .select-btn:hover {
+  background-color: #d14000;
+}
+
+/*labels*/
+.input-box {
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.label-row label {
+  font-weight: 600;
+  color: #222;
+}
+
+.icon {
+  font-size: 18px;
+  color: #222;
+}
+
+.input-box input,
+.input-box select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/*passnger details*/
+.passenger-block {
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.passenger-header {
+  background: orangered;
+  color: white;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.passenger-content {
+  display: none;
+  padding: 16px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.passenger-block.active .passenger-content {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.contact-details {
+  margin-top: 30px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.contact-details h4 {
+  margin-bottom: 10px;
+  color: orangered;
+  font-size: 1.2em;
+}
+
+.contact-details .note {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.contact-details input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+/* seat booking in flight */
+.plane-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.plane {
+  background: #fff;
+  border: 4px solid #333;
+  border-radius: 40px 40px 20px 20px;
+  padding: 20px;
+  width: fit-content;
+  position: relative;
+}
+
+.cockpit {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.seat-row {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-bottom: 10px;
+}
+
+.seat-block {
+  display: flex;
+  gap: 10px;
+}
+
+.seat {
+  width: 40px;
+  height: 40px;
+  background-color: #ccc;
+  border-radius: 8px;
+  text-align: center;
+  line-height: 40px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.seat.selected {
+  background-color: green;
+  color: white;
+}
+
+.seat.booked {
+  background-color: #888;
+  color: white;
+  cursor: not-allowed;
+}
+
+.tail {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+/* ===== Bus E-Ticket Styles ===== */
+.eticket {
+  max-width: 600px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  border: 2px solid #4CAF50;
+  border-radius: 12px;
+  padding: 30px 25px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.eticket h2 {
+  text-align: center;
+  color: #4CAF50;
+  margin-bottom: 25px;
+  font-size: 28px;
+}
+
+.eticket p {
+  font-size: 18px;
+  margin: 12px 0;
+  color: #333;
+}
+
+.barcode {
+  font-family: monospace;
+  font-size: 24px;
+  text-align: center;
+  margin-top: 30px;
+  letter-spacing: 3px;
+  color: #000;
+}
+
+.thanks {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 20px;
+  color: #666;
+}
+
+/* cab booking in index page*/
+#map {
+  border: 2px solid #ddd;
+  border-radius: 10px;
+}
+.suggestion-box {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: #fff;
+  position: absolute;
+  width: 300px;
+  z-index: 999;
+  border-radius: 5px;
+}
+
+.suggestion-box li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.suggestion-box li:hover {
+  background-color: #eee;
+}
+.leaflet-routing-container {
+  display: none !important;
+}
+.use-location-btn {
+  background-color: #f97316;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-top: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.use-location-btn:hover {
+  background-color: #ea580c;
+}
+
+/*cab confirm*/
+.confirm-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+}
+.cab-type-option {
+   margin: 10px 0;
+ }
+.ride-summary {
+  background: #f2f2f2;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+.cab-confirm-box {
+  max-width: 700px;
+  margin: 50px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+}
+
+.confirm-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.ride-summary {
+  background: #f2f2f2;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+button[type="submit"] {
+  background-color: #ff5722;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+}
+
+button[type="submit"]:hover {
+  background-color: #e64a19;
+}
+.cab-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.cab-card {
+  flex: 1 1 45%;
+  border: 2px solid #ccc;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s, border-color 0.3s;
+  background: #f9f9f9;
+}
+
+.cab-card img {
+  width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.cab-card:hover {
+  transform: scale(1.05);
+}
+
+.cab-card.selected {
+  border-color: #ff5722;
+  background: #fff3e0;
+}
+
+/* cabd.html*/
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 30px;
+  text-align: center;
+}
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #ff5722;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.driver-info {
+  display: none;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #f8f8f8;
+  text-align: left;
+}
+
+.otp-box {
+  background: #fff3e0;
+  padding: 10px;
+  margin: 10px 0;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+  border: 2px dashed #ff9800;
+  border-radius: 8px;
+}
+
+button {
+  background-color: #ff5722;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #e64a19;
+}
+
+/*cab payment*/
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
+}
+.summary {
+  margin-bottom: 30px;
+}
+.summary p {
+  font-size: 16px;
+  margin: 5px 0;
+}
+.payment-methods {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.payment-option {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+.payment-option.selected {
+  border-color: #f60;
+  background-color: #fff3e6;
+}
+#upiForm {
+  display: none;
+}
+.btn {
+  background-color: #f60;
+  color: white;
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* === CAB E-TICKET STYLES === */
+.ticket-container {
+  max-width: 700px;
+  margin: auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin-top: 30px;
+}
+
+.ticket-container h2 {
+  text-align: center;
+  color: #333;
+}
+
+.ticket-container .section {
+  margin-top: 20px;
+}
+
+.ticket-container .section h3 {
+  color: #f60;
+  margin-bottom: 10px;
+}
+
+.ticket-container .section p {
+  margin: 6px 0;
+  font-size: 16px;
+}
+
+.otp-box {
+  background: #f9f1e8;
+  padding: 10px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #d35400;
+  text-align: center;
+  margin-top: 15px;
+  border-radius: 8px;
+  letter-spacing: 2px;
+}
+
+.ticket-container .buttons {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.ticket-container .buttons button {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ticket-container .print-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.ticket-container .home-btn {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.driver-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.driver-details {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+@media print {
+  .print-btn,
+  .home-btn {
+    display: none !important;
+  }
+}
+
+/*cab suggestion box*/
+.input-box {
+  position: relative;
+}
+
+.suggestion-box {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 9999;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.suggestion-box li {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.suggestion-box li:hover {
+  background-color: #f7f7f7;
+}
+
+/* Common input box style */
+.input-box {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+/* Label styling */
+.input-box label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Wrapper to align icon + input */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Icon inside input */
+.input-icon {
+  position: absolute;
+  left: 10px;
+  color: #555;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* Input field */
+.input-wrapper input {
+  width: 100%;
+  padding: 10px 12px 10px 35px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+}
+
+/* Suggestions box */
+.suggestion-box {
+  list-style: none;
+  padding: 0;
+  margin: 5px 0 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 999;
+  position: absolute;
+  width: 100%;
+}
+
+.suggestion-box li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestion-box li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Date & Time in a row */
+.datetime-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.datetime-row .input-box {
+  flex: 1;
+  min-width: 180px;
+}
+
+.time-wrapper {
+  display: flex;
+  gap: 10px;
+}
+
+.time-wrapper select {
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/*history*/
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+#history-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.history-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  line-height: 1.6;
+}
+
+.history-card h3 {
+  margin-top: 0;
+  color: #4a4a4a;
+}
+
+.history-card p {
+  margin: 5px 0;
+}
+
+.passenger-list {
+  margin-left: 20px;
+}

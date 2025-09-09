@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Train E-Ticket - TripJoy Ride</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="eticket">
+    <h2>🎫 Train E-Ticket</h2>
+    <div id="ticketDetails">
+      <!-- Ticket details populated by script -->
+    </div>
+    <svg id="barcode"></svg>
+    <p class="thanks">Thank you for choosing <strong>TripJoy Ride</strong>!</p>
+  </div>
+
+  <div class="buttons">
+    <button class="print-btn" onclick="window.print()">🖨️ Print E-Ticket</button>
+    <button class="home-btn" onclick="window.location.href='index.html'">🏠 Back to Home</button>
+  </div>
+
+  <script>
+    const selectedRide = JSON.parse(localStorage.getItem('selectedTrain'));
+    const passengerCount = localStorage.getItem('passengerCount');
+    const passengerName = localStorage.getItem('passengerName') || "Passenger";
+    const phoneNumber = localStorage.getItem('phoneNumber') || "N/A";
+    const journeyDate = localStorage.getItem('journeyDate');
+    const travelClass = selectedRide?.selectedClass || 'Not specified';
+    const farePerPassenger = parseFloat(localStorage.getItem('farePerPassenger') || 0);
+    const totalFare = farePerPassenger * parseInt(passengerCount || 1);
+
+    const ticketNumber = 'TJR' + Math.floor(100000 + Math.random() * 900000);
+
+    if (!selectedRide || !journeyDate) {
+      document.getElementById('ticketDetails').innerHTML = "<p>Error: Booking details not found.</p>";
+    } else {
+      const passengers = JSON.parse(localStorage.getItem('passengerList')) || [
+        { name: passengerName, age: "N/A", gender: "N/A" }
+      ];
+
+      let passengerRows = passengers.map((p, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${p.name}</td>
+          <td>${p.age}</td>
+          <td>${p.gender}</td>
+          <td>${travelClass}</td>
+          <td>CNF</td>
+        </tr>
+      `).join('');
+
+      // Get departure and arrival details from localStorage
+      const departureTime = localStorage.getItem('departureTime') || '--:--';
+      const arrivalTime = localStorage.getItem('arrivalTime') || '--:--';
+      const arrivalDate = localStorage.getItem('arrivalDate') || '--/--/----';
+
+      // Add Departure & Arrival info
+      ticketHTML = `
+        <p><strong>Ticket No:</strong> ${ticketNumber}</p>
+        <p><strong>Contact:</strong> ${phoneNumber}</p>
+        <p><strong>Journey Date:</strong> ${new Date(journeyDate).toDateString()}</p>
+        <p><strong>Train:</strong> ${selectedRide.trainName} (${selectedRide.trainNumber})</p>
+        <p><strong>Route:</strong> ${selectedRide.from} → ${selectedRide.to}</p>
+        <p><strong>Class:</strong> ${travelClass}</p>
+        <p><strong>Departure:</strong> ${journeyDate} ${departureTime}</p>
+        <p><strong>Arrival:</strong> ${arrivalDate} ${arrivalTime}</p>
+        <p><strong>Total Passengers:</strong> ${passengers.length}</p>
+        <p><strong>Total Fare:</strong> ₹${totalFare.toFixed(2)}</p>
+        <h3>Passenger Details</h3>
+        <table border="1" cellpadding="8" cellspacing="0" style="width:100%; text-align:center; margin-top:10px;">
+          <thead>
+            <tr>
+              <th>S. No</th>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Class</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${passengerRows}
+          </tbody>
+        </table>
+      `;
+
+      // ✅ Add children under 5 if available
+      const childrenUnder5 = JSON.parse(localStorage.getItem("childrenUnder5") || "[]");
+
+      if (childrenUnder5.length > 0) {
+        let childRows = childrenUnder5.map((p, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${p.name}</td>
+            <td>${p.age}</td>
+            <td>${p.gender}</td>
+          </tr>
+        `).join('');
+
+        ticketHTML += `
+          <h3>Children Below Age 5 (Free Ticket)</h3>
+          <table border="1" cellpadding="8" cellspacing="0" style="width:100%; text-align:center; margin-top:10px;">
+            <thead>
+              <tr>
+                <th>S. No</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${childRows}
+            </tbody>
+          </table>
+        `;
+      }
+
+      document.getElementById('ticketDetails').innerHTML = ticketHTML;
+
+      // Save to booking history
+      const bookingEntry = {
+        ticketNumber,
+        journeyDate,
+        from: selectedRide.from,
+        to: selectedRide.to,
+        trainNumber: selectedRide.trainNumber,
+        trainName: selectedRide.trainName,
+        travelClass,
+        passengerCount: passengers.length,
+        fare: totalFare,
+        passengers,
+        childrenUnder5,
+        phone: phoneNumber
+      };
+
+      fetch('/save-booking-history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ type: "train", details: bookingEntry })
+      })
+      .then(res => res.json())
+      .then(data => console.log('✅ Booking saved:', data.message))
+      .catch(err => console.error('❌ Error saving booking:', err));
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script>
+    const barcodeValue = localStorage.getItem('phoneNumber') || "1234567890"; // or ticketNumber
+    JsBarcode("#barcode", barcodeValue, {
+      format: "CODE128",
+      lineColor: "#000",
+      width: 2,
+      height: 50,
+      displayValue: true
+    });
+  </script>
+
+</body>
+</html>

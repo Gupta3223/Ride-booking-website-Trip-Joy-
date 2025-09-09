@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flight Booking</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="script.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+        <h2 class="logo">
+            <img src="logo.jpg" alt="RideBooking Logo">
+        </h2>
+        <ul>
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#about">About Us</a></li>
+            <li><a href="index.html#help">Help</a></li>
+            <li><button class="login-btn">Login</button></li>
+        </ul>
+    </nav>
+
+  <!-- Flight Booking Section -->
+  <section class="flight-booking">
+    <div class="container">
+      <h1>Book Your Flight</h1>
+      <p>Search flights based on your destination and passenger details.</p>
+
+      <form class="flight-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="input-box">
+            <label for="from"><i class="fas fa-plane-departure"></i> From</label>
+            <input type="text" id="from" name="from" placeholder="Departure City" required />
+          </div>
+
+          <div class="input-box">
+            <label for="to"><i class="fas fa-plane-arrival"></i> To</label>
+            <input type="text" id="to" name="to" placeholder="Destination City" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-box">
+            <label for="date"><i class="fas fa-calendar-alt"></i> Travel Date</label>
+            <input type="date" id="date" name="date" required />
+          </div>
+
+          <div class="input-box passenger-selector">
+            <label for="passenger-toggle"><i class="fas fa-users"></i> Passengers</label>
+            <input type="text" id="passenger-toggle" readonly onclick="togglePassengerPopup()" value="1 Adult" />
+            <div id="passenger-popup" class="passenger-popup hidden">
+              <label>Adults (18-59): <input type="number" id="adults" min="0" value="1" onchange="updatePassengerSummary()"></label>
+              <label>Children (2-12): <input type="number" id="children" min="0" value="0" onchange="updatePassengerSummary()"></label>
+              <label>Infants (< 2): <input type="number" id="infants" min="0" value="0" onchange="updatePassengerSummary()"></label>
+              <label>Seniors (60+): <input type="number" id="seniors" min="0" value="0" onchange="updatePassengerSummary()"></label>
+              <p class="note"><h6>Note: You can book a maximum of 9 tickets (excluding up to 2 infants).<br>
+                Infants (under 2 years) must travel on an adult's lap and will not be assigned a separate seat.
+                To book a separate seat for an infant, please add them under the Children count instead.</h6></p>
+              <button onclick="togglePassengerPopup()">Done</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button type="submit" class="black-btn" onclick="searchFlights()">Search Flights</button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="flight-results" class="results-container"></div>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    function togglePassengerPopup() {
+      const popup = document.getElementById("passenger-popup");
+      popup.classList.toggle("hidden");
+    }
+
+    function updatePassengerSummary() {
+      const adults = parseInt(document.getElementById("adults").value) || 0;
+      const children = parseInt(document.getElementById("children").value) || 0;
+      const infants = parseInt(document.getElementById("infants").value) || 0;
+      const seniors = parseInt(document.getElementById("seniors").value) || 0;
+
+      const totalNonInfants = adults + children + seniors;
+
+      if (totalNonInfants > 9) {
+        alert("You can book a maximum of 9 passengers excluding infants.");
+        return;
+      }
+
+      if (infants > 2) {
+        alert("You can book a maximum of 2 infants.");
+        return;
+      }
+
+      const summary = [];
+      if (adults > 0) summary.push(`${adults} Adult${adults > 1 ? 's' : ''}`);
+      if (children > 0) summary.push(`${children} Child${children > 1 ? 'ren' : ''}`);
+      if (infants > 0) summary.push(`${infants} Infant${infants > 1 ? 's' : ''}`);
+      if (seniors > 0) summary.push(`${seniors} Senior${seniors > 1 ? 's' : ''}`);
+
+      document.getElementById("passenger-toggle").value = summary.join(", ");
+    }
+
+    async function searchFlights() {
+      const from = document.getElementById("from").value.trim();
+      const to = document.getElementById("to").value.trim();
+      const travelDate = document.getElementById("date").value;
+
+      const adults = parseInt(document.getElementById("adults").value) || 0;
+      const children = parseInt(document.getElementById("children").value) || 0;
+      const infants = parseInt(document.getElementById("infants").value) || 0;
+      const seniors = parseInt(document.getElementById("seniors").value) || 0;
+
+      const totalNonInfants = adults + children + seniors;
+
+      // Validation before flight search
+      if (!from || !to || !travelDate || totalNonInfants === 0) {
+        alert("Please fill all fields and select at least one non-infant passenger.");
+        return;
+      }
+
+      if (totalNonInfants > 9) {
+        alert("You can book a maximum of 9 passengers excluding infants.");
+        return;
+      }
+
+      if (infants > 2) {
+        alert("You can book a maximum of 2 infants.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/flights?from=${from}&to=${to}&userDate=${travelDate}`);
+        const flights = await response.json();
+        const resultsDiv = document.getElementById("flight-results");
+
+        if (flights.length === 0) {
+          resultsDiv.innerHTML = "<p>No flights found for your route.</p>";
+          return;
+        }
+
+        resultsDiv.innerHTML = flights.map(flight => {
+          const depTime = new Date(flight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const arrTime = new Date(flight.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          return `
+            <div class="flight-card-horizontal">
+              <div class="left-section">
+                <div class="row">
+                  <div><strong>${flight.airline} (${flight.flightNumber})</strong></div>
+                  <div><strong>Date:</strong> ${travelDate}</div>
+                </div>
+                <div class="row">
+                  <div>From: ${flight.from}  →  To: ${flight.to}</div>
+                </div>
+                <div class="row">
+                  <div>Departs: ${depTime} ---- Arrives: ${arrTime}</div>
+                </div>
+                <div class="row">
+                  <div>Duration: ${flight.duration}</div>
+                </div>
+              </div>
+              <div class="right-section">
+                <button class="book-btn"
+                  data-flight='${JSON.stringify({
+                    airline: flight.airline,
+                    flightNumber: flight.flightNumber,
+                    from: flight.from,
+                    to: flight.to,
+                    date: travelDate,
+                    departureTime: flight.departureTime,
+                    arrivalTime: flight.arrivalTime,
+                    duration: flight.duration,
+                    classes: flight.classes,
+                    passengers: { adults, children, infants, seniors }
+                  }).replace(/'/g, "&apos;")}'
+                  onclick="goToFlightBooking(this)">
+                  BOOK NOW
+                </button>
+              </div>
+            </div>
+          `;
+        }).join("");
+      } catch (error) {
+        console.error("Error fetching flights:", error);
+        document.getElementById("flight-results").innerHTML = "<p>Error fetching flights. Try again later.</p>";
+      }
+    }
+
+    function goToFlightBooking(button) {
+      const flightData = JSON.parse(
+        button.getAttribute('data-flight').replace(/&apos;/g, "'")
+      );
+      localStorage.setItem('selectedFlight', JSON.stringify(flightData));
+      window.location.href = 'flight-booking.html';
+    }
+  </script>
+</body>
+</html>

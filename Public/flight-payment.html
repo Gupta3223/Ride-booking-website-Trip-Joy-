@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flight Payment - TripJoy Ride</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <h2 class="logo"><img src="logo.jpg" alt="RideBooking Logo"></h2>
+  <ul>
+    <li><a href="index.html#home">Home</a></li>
+    <li><a href="index.html#about">About Us</a></li>
+    <li><a href="index.html#help">Help</a></li>
+    <li><button class="login-btn" onclick="openLoginModal()">Login</button></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <div class="summary">
+    <h2>Flight Payment Summary</h2>
+    <p><strong>Flight:</strong> <span id="flight-name"></span></p>
+    <p><strong>Date:</strong> <span id="flight-date"></span></p>
+    <p><strong>From:</strong> <span id="from-city"></span></p>
+    <p><strong>To:</strong> <span id="to-city"></span></p>
+    <p><strong>Passengers:</strong> <span id="passenger-count"></span></p>
+    <p><strong>Airline:</strong> <span id="airline-name"></span></p>
+    <p><strong>Flight Number:</strong> <span id="flight-number"></span></p>
+    <p><strong>Travel Class:</strong> <span id="class-selected"></span></p>
+    <p><strong>Fare per Passenger:</strong> ₹<span id="fare-per-passenger"></span></p>
+    <div class="total">Total Fare: ₹<span id="total-fare"></span></div>
+  </div>
+
+  <div class="payment-form">
+    <h2>Enter Payment Details</h2>
+    <form id="paymentForm">
+      <label for="name">Name on Card</label>
+      <input type="text" id="name" required>
+      <label for="cardNumber">Card Number</label>
+      <input type="text" id="cardNumber" maxlength="16" required>
+      <label for="expiryMonth">Expiry Date</label>
+      <div class="expiry-fields">
+        <select id="expiryMonth" required>
+          <option value="">MM</option><option>01</option><option>02</option><option>03</option>
+          <option>04</option><option>05</option><option>06</option><option>07</option>
+          <option>08</option><option>09</option><option>10</option><option>11</option><option>12</option>
+        </select>
+        <select id="expiryYear" required>
+          <option value="">YY</option><option>25</option><option>26</option><option>27</option><option>28</option>
+        </select>
+      </div>
+      <label for="cvv">CVV</label>
+      <input type="text" id="cvv" maxlength="3" required>
+      <button type="submit">Pay ₹<span id="pay-amount"></span></button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const selectedFlight = JSON.parse(localStorage.getItem('selectedFlight'));
+  const passengerData = selectedFlight?.passengers || {};
+  const selectedClass = selectedFlight?.travelClass || "Economy";
+  const journeyDate = selectedFlight?.date || "";
+  const passengerName = localStorage.getItem('passengerName') || 'Passenger';
+
+  const totalPassengers = (passengerData.adults || 0) + (passengerData.children || 0) + 
+                          (passengerData.infants || 0) + (passengerData.seniors || 0);
+  const fare = selectedFlight?.classes?.[selectedClass]?.fare || 0;
+
+  if (!selectedFlight) {
+    alert("No flight booking found.");
+    window.location.href = "index.html";
+  }
+
+  document.getElementById('flight-name').innerText = `${selectedFlight.airline}`;
+  document.getElementById('flight-date').innerText = new Date(journeyDate).toDateString();
+  document.getElementById('from-city').innerText = selectedFlight.from;
+  document.getElementById('to-city').innerText = selectedFlight.to;
+  document.getElementById('passenger-count').innerText = totalPassengers;
+  document.getElementById('airline-name').innerText = selectedFlight.airline;
+  document.getElementById('flight-number').innerText = selectedFlight.flightNumber;
+  document.getElementById('class-selected').innerText = selectedClass;
+  document.getElementById('fare-per-passenger').innerText = fare;
+  const payingPassengers = (passengerData.adults || 0) + (passengerData.children || 0) + (passengerData.seniors || 0);
+  const infantCount = passengerData.infants || 0;
+  const totalFare = fare * payingPassengers;
+  localStorage.setItem('farePerPassenger', fare.toString());
+  localStorage.setItem('totalFare', totalFare.toString());
+  document.getElementById('passenger-count').innerText = totalPassengers;
+  document.getElementById('fare-per-passenger').innerText = fare;
+  document.getElementById('total-fare').innerText = totalFare;
+  document.getElementById('pay-amount').innerText = totalFare;
+
+  document.getElementById('paymentForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert(`✅ Payment Successful!\n\nThank you, ${passengerName}, for booking a flight with TripJoy.`);
+    const viewBtn = document.createElement('button');
+    viewBtn.textContent = "🎫 View E-Ticket";
+    viewBtn.style.marginTop = "20px";
+    viewBtn.style.padding = "10px 20px";
+    viewBtn.style.fontSize = "16px";
+    viewBtn.style.cursor = "pointer";
+    viewBtn.onclick = () => window.location.href = "flight-eticket.html";
+    document.querySelector('.payment-form').appendChild(viewBtn);
+  });
+</script>
+
+</body>
+</html>

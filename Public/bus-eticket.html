@@ -1,0 +1,97 @@
+<!-- bus-eticket.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bus E-Ticket - TripJoy Ride</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="eticket">
+    <h2>🎫 Bus E-Ticket</h2>
+    <div id="ticketDetails">
+      <!-- Ticket details populated by script -->
+    </div>
+    <svg id="barcode"></svg>
+    <p class="thanks">Thank you for choosing <strong>TripJoy Ride</strong>!</p>
+  </div>
+
+  <div class="buttons">
+    <button class="print-btn" onclick="window.print()">🖨️ Print E-Ticket</button>
+    <button class="home-btn" onclick="window.location.href='index.html'">🏠 Back to Home</button>
+  </div>
+
+  <script>
+    const selectedRide = JSON.parse(localStorage.getItem('selectedBus'));
+    const passengerCount = localStorage.getItem('seatsBooked');
+    const passengerName = localStorage.getItem('passengerName') || "Passenger";
+    const phoneNumber = localStorage.getItem('phoneNumber') || "N/A";
+    const journeyDate = localStorage.getItem('journeyDate');
+    const departureTime = localStorage.getItem('departureTime') || "--:--" ;
+    const seatNumbers = JSON.parse(localStorage.getItem('selectedBusSeats')) || [];
+
+    if (!selectedRide || !journeyDate) {
+      document.getElementById('ticketDetails').innerHTML = "<p>Error: Booking details not found.</p>";
+    } else {
+      const totalFare = selectedRide.fare * passengerCount;
+      const ticketNumber = 'TJR' + Math.floor(100000 + Math.random() * 900000);
+
+      document.getElementById('ticketDetails').innerHTML = `
+        <p><strong>Ticket No:</strong> ${ticketNumber}</p>
+        <p><strong>Passenger Name:</strong> ${passengerName}</p>
+        <p><strong>Contact:</strong> ${phoneNumber}</p>
+        <p><strong>Journey Date:</strong> ${new Date(journeyDate).toDateString()}</p>
+        <p><strong>Departure Time:</strong> ${departureTime}</p>
+        <p><strong>Bus:</strong> ${selectedRide.operator} - ${selectedRide.busNumber}</p>
+        <p><strong>Route:</strong> ${selectedRide.from} → ${selectedRide.to}</p>
+        <p><strong>Bus Type:</strong> ${selectedRide.type}</p>
+        <p><strong>Seats Booked:</strong> ${seatNumbers.join(", ") || "N/A"}</p>
+        <p><strong>Total Fare:</strong> ₹${totalFare}</p>
+      `;
+
+      // Save booking details to history
+      const bookingEntry = {
+        type: "bus",
+        dateBooked: new Date().toISOString(),
+        details: {
+          from: selectedRide.from,
+          to: selectedRide.to,
+          fare: totalFare,
+          phone: phoneNumber,
+          passengers: [{ name: passengerName }], // Removed age and gender
+          busName: `${selectedRide.operator} - ${selectedRide.busNumber}`,
+          busType: selectedRide.type,
+          seatsBooked: seatNumbers,
+          journeyDate: journeyDate,
+          departureTime: departureTime
+        }
+      };
+
+      fetch('/save-booking-history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(bookingEntry)
+      })
+      .then(res => res.json())
+      .then(data => console.log('✅ Booking saved:', data.message))
+      .catch(err => console.error('❌ Error saving booking:', err));
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script>
+    const barcodeValue = phoneNumber;
+    JsBarcode("#barcode", barcodeValue, {
+      format: "CODE128",
+      lineColor: "#000",
+      width: 2,
+      height: 50,
+      displayValue: true
+    });
+  </script>
+
+</body>
+</html>

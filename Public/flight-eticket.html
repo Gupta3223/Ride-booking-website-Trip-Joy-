@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Flight E-Ticket - TripJoy Ride</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="eticket">
+    <h2>🎫 Flight E-Ticket</h2>
+    <div id="ticketDetails">
+      <!-- Ticket details populated by script -->
+    </div>
+    <svg id="barcode"></svg>
+    <p class="thanks">Thank you for flying with <strong>TripJoy Ride</strong>!</p>
+  </div>
+
+  <div class="buttons">
+    <button class="print-btn" onclick="window.print()">🖨️ Print E-Ticket</button>
+    <button class="home-btn" onclick="window.location.href='index.html'">🏠 Back to Home</button>
+  </div>
+
+  <script>
+  const flight = JSON.parse(localStorage.getItem('selectedFlight'));
+  const selectedClass = flight?.travelClass || "Economy";
+  const passengerData = flight?.passengers || {};
+  const journeyDate = flight?.date;
+  const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats')) || [];
+  const passengerDetails = JSON.parse(localStorage.getItem('flightPassengerDetails')) || [];
+  const phoneNumber = localStorage.getItem('phoneNumber') || "N/A";
+  const email = localStorage.getItem('email') || "N/A";
+
+  const totalPassengers = (passengerData.adults || 0) + (passengerData.children || 0) +
+                          (passengerData.infants || 0) + (passengerData.seniors || 0);
+  const farePerPassenger = localStorage.getItem('farePerPassenger') || "0";
+  const totalFare = localStorage.getItem('totalFare') || "0";
+  const ticketNumber = 'FLY' + Math.floor(100000 + Math.random() * 900000);
+
+  function renderPassengerList(passengers) {
+    if (!passengers.length) return "<p>No passenger details found.</p>";
+
+    return passengers.map((p, index) => `
+      <div class="passenger-block">
+        <p><strong>Passenger ${index + 1}:</strong></p>
+        <ul>
+          <li><strong>Name:</strong> ${p.name}</li>
+          <li><strong>Gender:</strong> ${p.gender}</li>
+          <li><strong>Date of Birth:</strong> ${new Date(p.dob).toDateString()}</li>
+        </ul>
+      </div>
+    `).join("");
+  }
+
+  if (!flight || !journeyDate) {
+    document.getElementById('ticketDetails').innerHTML = "<p>Error: Booking details not found.</p>";
+  } else {
+    document.getElementById('ticketDetails').innerHTML = `
+      <h3>🛫 Flight Details</h3>
+      <p><strong>Ticket No:</strong> ${ticketNumber}</p>
+      <p><strong>Contact:</strong> ${phoneNumber}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Journey Date:</strong> ${new Date(journeyDate).toDateString()}</p>
+      <p><strong>Flight:</strong> ${flight.airline} (${flight.flightNumber})</p>
+      <p><strong>Route:</strong> ${flight.from} → ${flight.to}</p>
+      <p><strong>Class:</strong> ${selectedClass}</p>
+      <p><strong>Seats Booked:</strong> ${selectedSeats.length} (${selectedSeats.join(", ")})</p>
+
+      <h3>Passenger Details</h3>
+      ${renderPassengerList(passengerDetails)}
+
+      <h3>Fare Summary</h3>
+      <p><strong>Total Passengers:</strong> ${totalPassengers}</p>
+      <p><strong>Fare per Passenger:</strong> ₹${farePerPassenger}</p>
+      <p><strong>Total Fare:</strong> ₹${totalFare}</p>
+    `;
+  }
+  // ✅ Save booking history
+    const bookingEntry = {
+      type: "flight",
+      dateBooked: new Date().toISOString(),
+      details: {
+        from: flight.from,
+        to: flight.to,
+        flightNumber: flight.flightNumber,
+        airline: flight.airline,
+        travelClass: selectedClass,
+        journeyDate,
+        seats: selectedSeats,
+        fare: totalFare,
+        farePerPassenger,
+        phone: phoneNumber,
+        email: email,
+        passengers: passengerDetails,
+        childrenUnder5: passengerDetails.filter(p => {
+          const age = (new Date() - new Date(p.dob)) / (1000 * 60 * 60 * 24 * 365.25);
+          return age < 5;
+        })
+      }
+    };
+
+    fetch('/save-booking-history', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(bookingEntry)
+    })
+    .then(res => res.json())
+    .then(data => console.log("✅ Flight booking saved:", data.message))
+    .catch(err => console.error("❌ Error saving flight booking:", err));
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script>
+    const barcodeValue = ticketNumber;
+    JsBarcode("#barcode", barcodeValue, {
+      format: "CODE128",
+      lineColor: "#000",
+      width: 2,
+      height: 50,
+      displayValue: true
+    });
+  </script>
+</body>
+</html>

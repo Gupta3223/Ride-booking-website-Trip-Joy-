@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cab Payment - TripJoy Ride</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<div class="container">
+  <h2>Cab Payment</h2>
+
+  <div class="summary">
+    <p><strong>Name:</strong> <span id="cabName"></span></p>
+    <p><strong>Mobile:</strong> <span id="cabMobile"></span></p>
+    <p><strong>From:</strong> <span id="cabFrom"></span></p>
+    <p><strong>To:</strong> <span id="cabTo"></span></p>
+    <p><strong>Cab Type:</strong> <span id="cabType"></span></p>
+    <p><strong>Total Fare:</strong> ₹<span id="cabFare"></span></p>
+    <p id="advanceLine" style="display:none;"><strong>Advance to Pay Now:</strong> ₹<span id="advanceAmount"></span></p>
+    <p id="remainingLine" style="display:none;"><strong>Remaining After Ride:</strong> ₹<span id="remainingAmount"></span></p>
+  </div>
+
+  <h3>Select Payment Method</h3>
+  <div class="payment-methods">
+    <div class="payment-option selected" id="upiOption" onclick="selectPayment('upi')">
+      <strong>UPI</strong>
+    </div>
+    <div class="payment-option" id="cashOption" onclick="selectPayment('cash')">
+      <strong>Cash on Ride</strong>
+    </div>
+  </div>
+
+  <form id="upiForm">
+    <label for="upiId">Enter UPI ID:</label><br>
+    <input type="text" id="upiId" required placeholder="example@upi" style="width: 100%; padding: 10px; margin-top: 8px; margin-bottom: 16px;">
+  </form>
+
+  <button class="btn" onclick="makePayment()">Pay</button>
+</div>
+
+<script>
+  const isPreBooking = localStorage.getItem("isPreBooking")?.toLowerCase() === "true";
+  const fullFare = parseFloat(localStorage.getItem("finalFare")) || 0;
+  const advancePercentage = 30; // Change to any % you want
+
+  const name = localStorage.getItem("cabName");
+  const mobile = localStorage.getItem("cabMobile");
+  const from = localStorage.getItem("pickup");
+  const to = localStorage.getItem("drop");
+  const cabType = localStorage.getItem("cabType");
+
+  document.getElementById("cabName").innerText = name;
+  document.getElementById("cabMobile").innerText = mobile;
+  document.getElementById("cabFrom").innerText = from;
+  document.getElementById("cabTo").innerText = to;
+  document.getElementById("cabType").innerText = cabType;
+  document.getElementById("cabFare").innerText = fullFare;
+
+  const advanceLine = document.getElementById("advanceLine");
+  const remainingLine = document.getElementById("remainingLine");
+
+  let selectedPayment = 'upi';
+
+  if (isPreBooking) {
+    // Show advance and remaining
+    const advance = Math.ceil((advancePercentage / 100) * fullFare);
+    const remaining = fullFare - advance;
+
+    document.getElementById("advanceAmount").innerText = advance;
+    document.getElementById("remainingAmount").innerText = remaining;
+    advanceLine.style.display = "block";
+    remainingLine.style.display = "block";
+
+    // Pre-booking forces UPI only
+    document.getElementById("cashOption").style.display = "none";
+  }
+
+  function selectPayment(method) {
+    selectedPayment = method;
+    document.getElementById("upiOption").classList.remove("selected");
+    document.getElementById("cashOption").classList.remove("selected");
+    document.getElementById("upiForm").style.display = method === "upi" ? "block" : "none";
+    document.getElementById(method + "Option").classList.add("selected");
+  }
+
+  function makePayment() {
+    if (selectedPayment === "upi") {
+      const upiId = document.getElementById("upiId").value.trim();
+      if (!upiId || !upiId.includes("@")) {
+        alert("❌ Please enter a valid UPI ID.");
+        return;
+      }
+    }
+
+    // Simulate payment processing
+    setTimeout(() => {
+      const paymentAmount = isPreBooking
+        ? Math.ceil((advancePercentage / 100) * fullFare)
+        : fullFare;
+
+      alert(`✅ ₹${paymentAmount} paid via UPI.\n${isPreBooking ? "Please pay the remaining amount after the ride." : "Thank you for full payment."}`);
+      window.location.href = "cab-eticket.html";
+    }, 1500);
+  }
+
+  // Default to show UPI form
+  document.getElementById("upiForm").style.display = "block";
+</script>
+
+</body>
+</html>

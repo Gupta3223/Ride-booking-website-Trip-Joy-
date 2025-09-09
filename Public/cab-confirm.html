@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cab Confirmation - TripJoy Ride</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="cab-confirm-box">
+    <div class="confirm-container">
+      <h2>Cab Booking Confirmation</h2>
+
+      <div class="ride-summary">
+        <p><strong>From:</strong> <span id="pickupDisplay"></span></p>
+        <p><strong>To:</strong> <span id="dropDisplay"></span></p>
+        <p><strong>Estimated Fare (Base):</strong> ₹<span id="fareDisplay"></span></p>
+      </div>
+
+      <form id="confirmForm">
+        <label for="name">Your Name:</label><br>
+        <input type="text" id="name" required><br><br>
+
+        <label for="mobile">Mobile Number:</label><br>
+        <input type="tel" id="mobile" pattern="[0-9]{10}" required><br><br>
+
+        <div class="cab-types-container">
+          <label><strong>Choose Cab Type:</strong></label>
+          <div class="cab-options">
+            <div class="cab-card" data-type="bike" data-multiplier="1" data-passengers="1">
+              <img src="bike.png" alt="Bike">
+              <h4>Bike</h4>
+              <p>Fare: ₹<span class="fare"></span></p>
+              <p>Max: 1 Passenger + Driver</p>
+            </div>
+            <div class="cab-card" data-type="rickshaw" data-multiplier="1.5" data-passengers="2">
+              <img src="rickshaw.png" alt="Rickshaw">
+              <h4>Rickshaw</h4>
+              <p>Fare: ₹<span class="fare"></span></p>
+              <p>Max: 3 Passengers + Driver</p>
+            </div>
+            <div class="cab-card" data-type="mini" data-multiplier="1.8" data-passengers="4">
+              <img src="mini.png" alt="Mini">
+              <h4>Mini</h4>
+              <p>Fare: ₹<span class="fare"></span></p>
+              <p>Max: 4 Passengers + Driver</p>
+            </div>
+            <div class="cab-card" data-type="sedan" data-multiplier="2" data-passengers="4">
+              <img src="sedan.png" alt="Sedan">
+              <h4>Sedan</h4>
+              <p>Fare: ₹<span class="fare"></span></p>
+              <p>Max: 4 Passengers + Driver</p>
+            </div>
+            <div class="cab-card" data-type="suv" data-multiplier="2.5" data-passengers="6">
+              <img src="suv.png" alt="SUV">
+              <h4>SUV</h4>
+              <p>Fare: ₹<span class="fare"></span></p>
+              <p>Max: 6 Passengers + Driver</p>
+            </div>
+          </div>
+        </div>
+
+        <p><strong>Total Fare:</strong> ₹<span id="totalFare">-</span></p>
+
+        <button type="submit">Proceed</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  const pickup = localStorage.getItem("pickup");
+  const drop = localStorage.getItem("drop");
+  const baseFare = parseFloat(localStorage.getItem("baseFare")) || 0;
+
+  document.getElementById("pickupDisplay").innerText = pickup;
+  document.getElementById("dropDisplay").innerText = drop;
+  document.getElementById("fareDisplay").innerText = baseFare;
+
+  const cabCards = document.querySelectorAll(".cab-card");
+  const totalFareSpan = document.getElementById("totalFare");
+
+  cabCards.forEach(card => {
+    const multiplier = parseFloat(card.dataset.multiplier);
+    const fare = Math.round(baseFare * multiplier);
+    card.querySelector(".fare").textContent = fare;
+
+    card.addEventListener("click", () => {
+      cabCards.forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+
+      totalFareSpan.textContent = fare;
+      localStorage.setItem("finalFare", fare);
+      localStorage.setItem("cabType", card.dataset.type);
+      localStorage.setItem("cabPassengers", card.dataset.passengers);
+    });
+  });
+
+  document.getElementById("confirmForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const selectedCab = document.querySelector(".cab-card.selected");
+    if (!selectedCab) {
+      alert("Please select a cab type.");
+      return;
+    }
+
+    const name = document.getElementById("name").value;
+    const mobile = document.getElementById("mobile").value;
+
+    localStorage.setItem("cabName", name);
+    localStorage.setItem("cabMobile", mobile);
+
+    window.location.href = "cabd.html";
+  });
+</script>
+
+</body>
+</html>

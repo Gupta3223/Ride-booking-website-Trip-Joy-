@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bus Booking</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <h2 class="logo">
+      <img src="logo.jpg" alt="RideBooking Logo" />
+    </h2>
+    <ul>
+      <li><a href="index.html#home">Home</a></li>
+      <li><a href="index.html#about">About Us</a></li>
+      <li><a href="index.html#help">Help</a></li>
+    </ul>
+  </nav>
+
+  <section class="results-section">
+    <h1>Bus Ticket Booking</h1>
+    <div id="selectedBus" class="results-container">
+      <!-- Selected bus details will be shown here -->
+    </div>
+
+    <form id="busBookingForm" class="booking-form">
+      <label for="passengerName">Passenger Name:</label>
+      <input type="text" id="passengerName" name="passengerName" placeholder="Enter Name" />
+
+      <label for="seats">Number of Seats:</label>
+      <input type="number" id="seats" name="seats" min="1" required placeholder="Enter Number of seats"/>
+
+      <label for="phoneNumber">Phone Number:</label>
+      <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Enter Phone Number" pattern="[0-9]{10}" required />
+
+      <button type="button" id="nextBtn">Next</button>
+    </form>
+    
+    <div id="bookingMessage"></div>
+  </section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const selectedBusContainer = document.getElementById("selectedBus");
+      const bookingForm = document.getElementById("busBookingForm");
+      const bookingMessage = document.getElementById("bookingMessage");
+      const seatsInput = document.getElementById("seats");
+      const passengerInput = document.getElementById("passengerName");
+      const phoneInput = document.getElementById("phoneNumber");
+
+      const selectedBus = JSON.parse(localStorage.getItem("selectedBus"));
+      const journeyDate = localStorage.getItem("journeyDate");
+
+      if (!selectedBus) {
+        selectedBusContainer.innerHTML = "<p>No bus selected. Please go back and select a bus.</p>";
+        bookingForm.style.display = "none";
+        return;
+      }
+
+      seatsInput.max = selectedBus.seatsAvailable;
+
+      selectedBusContainer.innerHTML = `
+        <h2>${selectedBus.operator} - Bus No: ${selectedBus.busNumber}</h2>
+        <p id="journeyDateDisplay"></p>
+        <p>From: ${selectedBus.from} → To: ${selectedBus.to}</p>
+        <p>Type: ${selectedBus.type}</p>
+        <p>Departure:${selectedBus.departureTime}</p>
+        <p>Arrival:${selectedBus.arrivalTime}</p>
+        <p>Fare: ₹${selectedBus.fare}</p>
+        <p>Seats Available: ${selectedBus.seatsAvailable}</p>
+      `;
+
+      const journeyDateDisplay = document.getElementById("journeyDateDisplay");
+      if (journeyDate && journeyDateDisplay) {
+        const formattedDate = new Date(journeyDate).toDateString();
+        journeyDateDisplay.textContent = `Journey Date: ${formattedDate}`;
+      }
+
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        const passengerName = passengerInput.value.trim();
+        const phoneNumber = phoneInput.value.trim();
+        const seatsRequested = parseInt(seatsInput.value);
+
+        if (!passengerName || !phoneNumber || isNaN(seatsRequested)) {
+          bookingMessage.textContent = "Please enter all fields.";
+          bookingMessage.style.color = "red";
+          return;
+        }
+
+        if (seatsRequested > selectedBus.seatsAvailable) {
+          bookingMessage.textContent = "Not enough seats available.";
+          bookingMessage.style.color = "red";
+          return;
+        }
+
+        // Store values temporarily
+        localStorage.setItem('rideType', 'bus');
+        localStorage.setItem('selectedBus', JSON.stringify(selectedBus));
+        localStorage.setItem('seatsBooked', seatsRequested);
+        localStorage.setItem('passengerName', passengerName);
+        localStorage.setItem('phoneNumber', phoneNumber);
+        localStorage.setItem('departureTime', selectedBus.departureTime);
+
+        // Redirect to payment page
+        window.location.href = "bus-seatbooking.html";
+      });
+    });
+  </script>
+
+</body>
+</html>

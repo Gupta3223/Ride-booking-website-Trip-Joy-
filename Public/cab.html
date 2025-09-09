@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cab Booking - TripJoy</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <h2 class="logo">
+            <img src="logo.jpg" alt="RideBooking Logo">
+        </h2>
+        <ul>
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#about">About Us</a></li>
+            <li><a href="index.html#help">Help</a></li>
+            <li><button class="login-btn">Login</button></li>
+        </ul>
+    </nav>
+
+    <!-- Cab Booking Section -->
+    <section class="ride-booking">
+        <h1>Schedule a Cab Instantly!</h1>
+        <p>Get to your destination comfortably and safely.</p>
+
+        <div class="input-container">
+            <div class="input-box">
+            <label for="pickup">Pickup Location</label>
+            <div class="input-wrapper">
+                <i class="fas fa-location-dot input-icon"></i>
+                <input type="text" id="pickup" placeholder="Enter location" autocomplete="off" />
+            </div>
+            <ul id="pickup-suggestions" class="suggestion-box"></ul>
+            <button id="use-location" class="location-btn">📍 Use My Location</button>
+            </div>
+
+            <div class="input-box">
+            <label for="drop">Destination</label>
+            <div class="input-wrapper">
+                <i class="fas fa-map-marker-alt input-icon"></i>
+                <input type="text" id="drop" placeholder="Enter destination" autocomplete="off" />
+            </div>
+            <ul id="drop-suggestions" class="suggestion-box"></ul>
+            </div>
+
+           <div class="datetime-row">
+                <div class="input-box">
+                    <label for="ride-date">Date</label>
+                    <div class="input-wrapper">
+                    <i class="fas fa-calendar-alt input-icon"></i>
+                    <input type="date" id="ride-date" placeholder="dd-mm-yyyy" />
+                    </div>
+                    <div id="date-warning" style="color: red; font-size: 14px; margin-top: 5px;"></div>
+                </div>
+
+                <div class="input-box">
+                    <label for="ride-time">Time</label>
+                    <div class="input-wrapper">
+                    <div class="time-wrapper">
+                        <select id="ride-hour">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+
+                        <select id="ride-minute">
+                            <option value="">Minute</option>
+                            <option value="00">00</option>
+                            <option value="15">15</option>
+                            <option value="30">30</option>
+                            <option value="45">45</option>
+                        </select>
+
+                        <select id="ride-ampm">
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+            <div id="map" style="height: 400px; margin-top: 20px; border-radius: 10px;"></div>
+        </div>
+
+        <div id="fareEstimate" style="margin-top: 10px; font-weight: 600;"></div>
+        
+        <div class="button-container">
+            <button class="gray-btn" onclick="storeRideDetails()">Schedule Ride</button>
+        </div>
+    </section>
+    <script>
+        const map = L.map("map").setView([19.0760, 72.8777], 13); // Mumbai center
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Taxi icon definition
+        const taxiIcon = L.icon({
+        iconUrl: 'taxi.png',  // Make sure taxi.png is in the same directory
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -30]
+        });
+
+        let pickupMarker = null;
+        let dropMarker = null;
+        let routeControl = null;
+
+        // Geocode
+        async function geocodeLocation(query) {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (!data.length) throw new Error("No results");
+            return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        } catch {
+            alert(`Could not locate: ${query}`);
+            return null;
+        }
+        }
+
+        // Pickup input blur
+        document.getElementById('pickup').addEventListener('blur', async () => {
+        const location = await geocodeLocation(document.getElementById('pickup').value);
+        if (location) {
+            if (pickupMarker) map.removeLayer(pickupMarker);
+            pickupMarker = L.marker(location, { icon: taxiIcon }).addTo(map).bindPopup("Pickup").openPopup();
+            map.setView(location, 14);
+            tryDrawRoute();
+        }
+        });
+
+        // Drop input blur
+        document.getElementById('drop').addEventListener('blur', async () => {
+        const location = await geocodeLocation(document.getElementById('drop').value);
+        if (location) {
+            if (dropMarker) map.removeLayer(dropMarker);
+            dropMarker = L.marker(location).addTo(map).bindPopup("Drop").openPopup();
+            map.setView(location, 14);
+            tryDrawRoute();
+        }
+        });
+
+        // Autocomplete
+        function setupAutocomplete(inputId, type) {
+        const input = document.getElementById(inputId);
+        const suggestionBox = document.getElementById(`${inputId}-suggestions`);
+
+        input.addEventListener('input', async () => {
+            const query = input.value.trim();
+            if (query.length < 3) {
+            suggestionBox.innerHTML = '';
+            return;
+            }
+
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+            const results = await res.json();
+
+            suggestionBox.innerHTML = '';
+            results.slice(0, 5).forEach(place => {
+            const li = document.createElement('li');
+            li.textContent = place.display_name;
+
+            li.addEventListener('click', () => {
+                input.value = place.display_name;
+                suggestionBox.innerHTML = '';
+                const latlng = L.latLng(place.lat, place.lon);
+
+                if (type === 'pickup') {
+                if (pickupMarker) map.removeLayer(pickupMarker);
+                pickupMarker = L.marker(latlng, { icon: taxiIcon }).addTo(map).bindPopup("Pickup").openPopup();
+                } else {
+                if (dropMarker) map.removeLayer(dropMarker);
+                dropMarker = L.marker(latlng).addTo(map).bindPopup("Drop").openPopup();
+                }
+
+                map.setView(latlng, 14);
+                tryDrawRoute();
+            });
+
+            suggestionBox.appendChild(li);
+            });
+        });
+
+        // Hide suggestions on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest(`#${inputId}`)) {
+            suggestionBox.innerHTML = '';
+            }
+        });
+        }
+
+        setupAutocomplete('pickup', 'pickup');
+        setupAutocomplete('drop', 'drop');
+
+        // Use My Location
+        document.getElementById("use-location").addEventListener("click", () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            const latlng = [latitude, longitude];
+
+            if (pickupMarker) map.removeLayer(pickupMarker);
+            pickupMarker = L.marker(latlng, { icon: taxiIcon }).addTo(map).bindPopup("Pickup (Current)").openPopup();
+            map.setView(latlng, 14);
+
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+            const data = await response.json();
+            const locationName = data.display_name || "Current Location";
+            document.getElementById("pickup").value = locationName;
+            }, () => {
+            alert("Location access denied.");
+            });
+        } else {
+            alert("Geolocation not supported.");
+        }
+        });
+        
+        //date
+        window.addEventListener("DOMContentLoaded", () => {
+            const dateInput = document.getElementById("ride-date");
+            const warningDiv = document.getElementById("date-warning");
+
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+
+            const maxDate = new Date(tomorrow);
+            maxDate.setDate(tomorrow.getDate() + 6); // tomorrow + 6 = 7 days total
+
+            const toISO = (d) => d.toISOString().split("T")[0];
+
+            // Set min, max, and default value
+            dateInput.min = toISO(tomorrow);
+            dateInput.max = toISO(maxDate);
+            dateInput.value = toISO(tomorrow); // ✅ This makes tomorrow pre-selected
+
+            dateInput.addEventListener("change", () => {
+                const selected = new Date(dateInput.value);
+                if (selected < tomorrow || selected > maxDate) {
+                    warningDiv.innerText = "Please select a date between tomorrow and the next 7 days.";
+                    dateInput.value = toISO(tomorrow);
+                } else {
+                    warningDiv.innerText = "";
+                }
+            });
+        });
+
+        let fare = 0;
+        function tryDrawRoute() {
+            console.log("Trying to draw route...");
+            if (pickupMarker && dropMarker && map) {
+                console.log("Pickup Marker:", pickupMarker);
+                console.log("Drop Marker:", dropMarker);
+
+                try {
+                if (routeControl && map.hasLayer(routeControl._container)) {
+                    map.removeControl(routeControl);
+                }
+
+                routeControl = L.Routing.control({
+                    waypoints: [pickupMarker.getLatLng(), dropMarker.getLatLng()],
+                    router: new L.Routing.OSRMv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1'  // safer with explicit service
+                    }),
+                    routeWhileDragging: false,
+                    addWaypoints: false,
+                    draggableWaypoints: false,
+                    createMarker: () => null
+                }).addTo(map);
+
+                const dist = pickupMarker.getLatLng().distanceTo(dropMarker.getLatLng()) / 1000;
+                fare = Math.round(dist * 15);
+                document.getElementById("fareEstimate").innerText = `Estimated Fare: ₹${fare}`;
+                } catch (err) {
+                console.error("Route drawing failed:", err);
+                document.getElementById("fareEstimate").innerText = "Unable to draw route at the moment. Please retry.";
+                }
+            }
+        }
+
+        function storeRideDetails() {
+            const pickup = document.getElementById("pickup").value.trim();
+            const drop = document.getElementById("drop").value.trim();
+            const date = document.getElementById("ride-date").value;
+            const hour = document.getElementById("ride-hour").value;
+            const minute = document.getElementById("ride-minute").value;
+            const ampm = document.getElementById("ride-ampm").value;
+            const rideTime = `${hour}:${minute} ${ampm}`;
+
+            if (!hour || !minute || !ampm) {
+                alert("Please select a valid time.");
+                return;
+            }
+
+            if (!pickup || !drop || !date || !hour || !minute || !ampm) {
+                alert("Please complete all ride details before scheduling.");
+                return;
+            }
+
+            const baseFare = fare;
+
+            localStorage.setItem("isPreBooking", "true");
+            localStorage.setItem("pickup", pickup);
+            localStorage.setItem("drop", drop);
+            localStorage.setItem("rideDate", date);
+            localStorage.setItem("rideTime", rideTime);
+            localStorage.setItem("baseFare", baseFare);
+
+            alert("Ride scheduled successfully!");
+            window.location.href = "cab-confirm.html";
+        }
+    </script>
+
+</body>
+</html>

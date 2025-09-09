@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Reservation</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <h2 class="logo">
+      <img src="logo.jpg" alt="RideBooking Logo">
+      </h2>
+      <ul>
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="index.html#about">About Us</a></li>
+        <li><a href="index.html#help">Help</a></li>
+        <li><button class="login-btn">Login</button></li>
+      </ul>
+  </nav>
+
+  <!-- Bus Ticket Booking Section -->
+  <section class="ride-booking">
+    <h1>Book Your Bus Ticket</h1>
+    <p>Search and book bus tickets across India easily.</p>
+
+    <form id="busSearchForm" class="input-container">
+      <!-- From Location -->
+      <div class="input-box">
+        <div class="label-row">
+          <i class="fas fa-map-marker-alt icon"></i>
+          <label for="from"><strong>From Station</strong></label>
+        </div>
+        <input type="text" id="from" name="from" placeholder="From (e.g. Mumbai - CSMT)" required>
+      </div>
+
+      <!-- To Location -->
+      <div class="input-box">
+        <div class="label-row">
+          <i class="fas fa-map-marker-alt icon"></i>
+          <label for="to"><strong>To Station</strong></label>
+        </div>
+        <input type="text" id="to" name="to" placeholder="To (e.g. Thane)" required>
+      </div>
+
+      <!-- Travel Date -->
+      <div class="input-box">
+        <div class="label-row">
+          <i class="fas fa-calendar icon"></i>
+          <label for="date"><strong>Travel Date</strong></label>
+        </div>
+        <input type="date" id="date" name="date" required>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="button-container">
+        <button class="black-btn" type="submit">Search Buses</button>
+      </div>
+    </form>
+
+    <!-- Bus Results -->
+    <div id="bus-results"></div>
+
+    <script>
+      document.getElementById("busSearchForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const from = document.getElementById("from").value.trim();
+        const to = document.getElementById("to").value.trim();
+        const date = document.getElementById("date").value;
+        localStorage.setItem("journeyDate", date);
+
+        try {
+          const response = await fetch("http://localhost:5000/api/buses/search", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ from, to, date })
+          });
+
+          const buses = await response.json();
+          const resultsDiv = document.getElementById("bus-results");
+
+          resultsDiv.innerHTML = buses.length
+            ? buses.map(bus => `
+              <div class="train-card">
+                <p><strong>${bus.type}</strong> - ${bus.operator || "Bus"} (${bus.busNumber || ""})</p>
+                <p><b>${bus.from}</b> → <b>${bus.to}</b></p>
+                <p>Departure: ${bus.departureTime} | Arrival: ${bus.arrivalTime}</p>
+                <p>Fare: ₹${bus.fare}</p>
+                <p>Available Seats: ${bus.seatsAvailable}</p>
+                <button class="book-btn" data-bus='${JSON.stringify(bus)}'>Book Ticket</button>
+              </div>
+            `).join("")
+            : "<p>No buses found matching your criteria.</p>";
+
+          document.querySelectorAll(".book-btn").forEach(btn => {
+            btn.addEventListener("click", function () {
+              const busData = JSON.parse(this.getAttribute("data-bus"));
+              localStorage.setItem("selectedBus", JSON.stringify(busData));
+              localStorage.setItem("journeyDate", date);
+              window.location.href = "bus-booking.html";
+            });
+          });
+
+        } catch (err) {
+          console.error("Error fetching buses:", err);
+          alert("Something went wrong while fetching buses.");
+        }
+      });
+
+      // Set min and max date for travel input
+      const dateInput = document.getElementById("date");
+      const today = new Date();
+      const nextMonth = new Date();
+      nextMonth.setMonth(today.getMonth() + 1);
+
+      // Format date as yyyy-mm-dd
+      const toISO = (d) => d.toISOString().split("T")[0];
+
+      dateInput.min = toISO(today);
+      dateInput.max = toISO(nextMonth);
+    </script>
+  </section>
+</body>
+</html>

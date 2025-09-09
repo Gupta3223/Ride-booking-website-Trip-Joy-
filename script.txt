@@ -1,0 +1,51 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const loginBtn = document.querySelector(".login-btn");
+    const loginModal = document.getElementById("login-modal");
+    const registerModal = document.getElementById("register-modal");
+    const closeBtns = document.querySelectorAll(".close");
+    const registerLink = document.getElementById("register-link");
+    const signUpLink = document.getElementById("sign-up-link"); // New line for the "Sign up today!" link
+
+    // Open login modal
+    loginBtn.addEventListener("click", () => {
+        loginModal.style.display = "block";
+    });
+
+    // Open register modal from the "Register Here" link inside the login modal
+    registerLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        loginModal.style.display = "none";
+        registerModal.style.display = "block";
+    });
+
+    // Open register modal from the "Sign up today!" link in the "Join Our Community" section
+    signUpLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        loginModal.style.display = "none"; // Close login modal if it's open
+        registerModal.style.display = "block"; // Open the registration modal
+    });
+
+    // Close modals when close button is clicked
+    closeBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            loginModal.style.display = "none";
+            registerModal.style.display = "none";
+        });
+    });
+
+    // Close modals when clicked outside of modal content
+    window.addEventListener("click", (e) => {
+        if (e.target === loginModal || e.target === registerModal) {
+            loginModal.style.display = "none";
+            registerModal.style.display = "none";
+        }
+    });
+});
+
+// cab page
+document.addEventListener('DOMContentLoaded', function() {
+    const cabButton = document.querySelector('.book-btn:nth-child(3)'); // Cab button is the third in the list
+    cabButton.addEventListener('click', function() {
+        window.location.href = 'cab-booking.html';
+    });
+});

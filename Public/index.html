@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripJoy ride</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+      <h2 class="logo">
+        <img src="logo.jpg" alt="RideBooking Logo">
+      </h2>
+      
+      <div class="nav-right">
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#help">Help</a></li>
+        </ul>
+
+        <div class="user-menu-container">
+          <button class="login-btn">Login</button>
+          <div class="user-icon hidden" id="user-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="dropdown-menu hidden" id="dropdown-menu">
+            <ul>
+              <li><a href="history.html">🕓 Booking History</a></li>
+              <li id="logout">🚪 Log out</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="ride-booking">
+        <h1>Need a Cab for now?</h1>
+        <p>Add your trip details, hop in, and go.</p>
+
+        <div class="input-box">
+            <div class="label-row">
+            <i class="fas fa-map-marker-alt icon"></i>
+            <label for="pickup"><strong>Location</strong></label>
+            </div>
+            <input type="text" id="pickup" placeholder="Enter location">
+            <ul id="pickup-suggestions" class="suggestion-box"></ul>
+            <button onclick="useMyLocation()">📍 Use My Location</button>
+        </div>
+
+        <div class="input-box">
+            <div class="label-row">
+            <i class="fas fa-map-marker-alt icon"></i>
+            <label for="drop"><strong>Destination</strong></label>
+            </div>
+            <input type="text" id="drop" placeholder="Enter destination">
+            <ul id="drop-suggestions" class="suggestion-box"></ul>
+        </div>
+
+        <div class="button-container">
+            <button class="black-btn" onclick="drawRoute()">See Prices</button>
+            <button onclick="resetMap()">Reset</button>
+        </div>
+
+        <div id="map" style="height: 300px; width: 100%; margin-top: 20px; border-radius: 10px;"></div>
+        <div id="fareEstimate" style="margin-top: 10px; font-weight: 600;"></div>
+        <button class="black-btn" onclick="bookCab()">Book</button>
+    </section>
+
+    <section id="home" class="hero">
+        <h1>Book Your Ride Easily!</h1>
+        <p>Choose from Bus, Train, Cab and Flights</p>
+        <div class="booking-buttons">
+            <a href="bus.html" class="book-btn"><i class="fas fa-bus"></i> Bus</a>
+            <a href="train.html" class="book-btn"><i class="fas fa-train"></i> Train</a>
+            <a href="cab.html" class="book-btn"><i class="fas fa-taxi"></i> Cab</a>
+            <a href="flight.html" class="book-btn"><i class="fas fa-plane"></i> Flight</a>
+        </div>
+    </section>
+
+    <section id="about">
+        <h2>About Us</h2>
+
+        <div class="about-content">
+            <div class="about-text">
+                <h3>Our Story</h3>
+                <p>
+                    TripJoy was founded in 2025 with a simple yet powerful mission: to connect people seamlessly and affordably through rides to help them reach their destination. We believe that transportation should be accessible to everyone, and that sharing rides is not only cost-effective but also environmentally friendly. We started with a small community in INDIA and have since grown to serve users across many Nations across the World.
+                </p><br><br>
+
+                <h3>Our Mission</h3>
+                <p>
+                    Our mission is to revolutionize the way people travel by providing a safe, reliable, and convenient ride-sharing platform. We are committed to:
+                    <li><b>Affordability:</b> Making travel accessible to all budgets.</li>
+                    <li><b>Sustainability:</b> Reducing our carbon footprint through shared transportation.</li>
+                    <li><b>Community:</b> Building a community of riders and drivers who support each other.</li>
+                    <li><b>Convenience:</b> Providing a user-friendly platform for easy booking and ride management.</li>
+                    <li><b>Safety:</b> Ensuring the safety of our riders and drivers through robust safety measures.</li>
+                </p><br><br>
+
+                <h3>Our Values</h3>
+                <p>
+                    We are guided by the following core values:
+                    <li><b>Integrity:</b> We operate with honesty and transparency in all our interactions.</li>
+                    <li><b>Respect:</b> We treat all members of our community with respect and courtesy.</li>
+                    <li><b>Innovation:</b> We continuously strive to improve our platform and services.</li>
+                    <li><b>Customer Focus:</b> We prioritize the needs of our riders and drivers.</li>
+                    <li><b>Responsibility:</b> We are committed to being a responsible and ethical company.</li>
+                </p><br><br>
+
+                <h3>Join Our Community</h3>
+                <p>
+                    Whether you're a rider looking for a convenient and affordable way to travel, or a driver wanting to earn extra income, we invite you to join our growing community. Together, we can make transportation better for everyone. <a href="#" id="sign-up-link">Sign up today!</a>
+                </p>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="help">
+        <h2>Help</h2>
+        <h3>Welcome to TripJoy Support</h3>
+        <p>We're here to help. Looking for customer service contact information? Explore support resources for the relevant products below to find the best way to reach out about your issue.</p>
+        <br>
+        <h4 align="center">Email: support@TripJoy.com | Phone: +1234567890</h4>
+    </section>
+
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <h2>Login</h2>
+            <form>
+                <input type="email" placeholder="Email" required> <br>
+                <input type="password" placeholder="Password" required> <br>
+                <div class="checkbox-container">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                <button type="submit">Login</button><br>
+                <p>New user? <a href="#" id="register-link">Register Here</a></p>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="register-modal">
+        <div class="modal-content">
+            <h2>Register</h2>
+            <form>
+                <input type="text" placeholder="First Name" required>
+                <input type="text" placeholder="Last Name" required>
+                <input type="email" placeholder="Email" required>
+                <select>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="others">Others</option>
+                </select>
+                <input type="date" required>
+                <input type="password" placeholder="Password" required>
+                <input type="password" placeholder="Confirm Password" required>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+
+<!-- Leaflet and Plugins -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
+
+<script>
+let map = L.map('map').setView([19.0760, 72.8777], 13); // Mumbai default
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+const taxiIcon = L.icon({
+  iconUrl: 'taxi.png',
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -30]
+});
+
+let pickupMarker = null;
+let dropMarker = null;
+let routeControl = null;
+
+function resetMap() {
+  if (pickupMarker) map.removeLayer(pickupMarker);
+  if (dropMarker) map.removeLayer(dropMarker);
+  if (routeControl) map.removeControl(routeControl);
+  pickupMarker = dropMarker = routeControl = null;
+  document.getElementById("fareEstimate").innerText = '';
+}
+
+function drawRoute() {
+  if (pickupMarker && dropMarker) {
+    if (routeControl) map.removeControl(routeControl);
+    routeControl = L.Routing.control({
+      waypoints: [pickupMarker.getLatLng(), dropMarker.getLatLng()],
+      routeWhileDragging: false,
+      addWaypoints: false,
+      draggableWaypoints: false,
+      createMarker: () => null
+    }).addTo(map);
+
+    const dist = pickupMarker.getLatLng().distanceTo(dropMarker.getLatLng()) / 1000;
+    const fare = Math.round(dist * 15);
+    document.getElementById("fareEstimate").innerText = `Estimated Fare: ₹${fare}`;
+  }
+}
+
+// Autocomplete
+function setupAutocomplete(inputId, type) {
+  const input = document.getElementById(inputId);
+  const suggestions = document.getElementById(`${inputId}-suggestions`);
+
+  input.addEventListener("input", async () => {
+    const query = input.value;
+    if (query.length < 3) {
+      suggestions.innerHTML = '';
+      return;
+    }
+
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+
+    suggestions.innerHTML = '';
+    data.slice(0, 5).forEach(place => {
+      const li = document.createElement('li');
+      li.textContent = place.display_name;
+      li.addEventListener("click", () => {
+        input.value = place.display_name;
+        suggestions.innerHTML = '';
+        const latlng = L.latLng(place.lat, place.lon);
+        if (type === 'pickup') {
+          if (pickupMarker) map.removeLayer(pickupMarker);
+          pickupMarker = L.marker(latlng, { icon: taxiIcon }).addTo(map).bindPopup("Pickup").openPopup();
+        } else {
+          if (dropMarker) map.removeLayer(dropMarker);
+          dropMarker = L.marker(latlng).addTo(map).bindPopup("Drop").openPopup();
+        }
+        map.setView(latlng, 14);
+      });
+      suggestions.appendChild(li);
+    });
+  });
+}
+
+setupAutocomplete('pickup', 'pickup');
+setupAutocomplete('drop', 'drop');
+
+// Geolocation
+function useMyLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const latlng = L.latLng(pos.coords.latitude, pos.coords.longitude);
+      if (pickupMarker) map.removeLayer(pickupMarker);
+      pickupMarker = L.marker(latlng, { icon: taxiIcon }).addTo(map).bindPopup("Pickup (Current)").openPopup();
+      map.setView(latlng, 14);
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&accept-language=en&lat=${latlng.lat}&lon=${latlng.lng}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("pickup").value = data.display_name || "My Location";
+        });
+    }, () => alert("Location access denied."));
+  } else {
+    alert("Geolocation not supported.");
+  }
+}
+
+function bookCab() {
+  if (!pickupMarker || !dropMarker) {
+    alert("Please select both pickup and destination.");
+    return;
+  }
+
+  const pickup = document.getElementById("pickup").value;
+  const drop = document.getElementById("drop").value;
+  const dist = pickupMarker.getLatLng().distanceTo(dropMarker.getLatLng()) / 1000;
+  const estimatedFare = Math.round(dist * 15);
+
+  localStorage.setItem("pickup", pickup);
+  localStorage.setItem("drop", drop);
+  localStorage.setItem("baseFare", estimatedFare);
+  localStorage.setItem("isPreBooking", "false");
+
+  window.location.href = "cab-confirm.html";
+}
+</script>
+
+</body>
+</html>

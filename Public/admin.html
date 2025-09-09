@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - TripJoy Ride</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      margin: 0; 
+      padding: 0; 
+    }
+    #loginOverlay {
+      position: fixed; top: 0; left: 0; height: 100vh; width: 100vw;
+      background: rgba(0, 0, 0, 0.8); color: white;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    .login-box { 
+      background: #fff; color: #000; 
+      padding: 20px; border-radius: 8px; width: 300px; 
+      text-align: center; 
+    }
+    .login-box input { 
+      width: 100%; 
+      margin: 10px 0; 
+      padding: 8px; 
+      font-size: 14px; 
+    }
+    .login-box button { 
+      padding: 8px 16px; 
+      font-size: 14px; 
+      cursor: pointer; 
+    }
+    #adminContent { 
+      display: none; 
+    }
+    .navbar { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      background: #333; 
+      color: white; 
+      padding: 10px 20px; 
+    }
+    .admin-container { 
+      padding: 20px; text-align: center; 
+    }
+    .button-group { 
+      margin: 30px 0; 
+    }
+    .button-group button {
+      margin: 10px; padding: 12px 20px; font-size: 16px;
+      cursor: pointer; border: none; background: #007bff; color: white;
+      border-radius: 5px; transition: background 0.3s;
+    }
+    .button-group button:hover { 
+      background: #0056b3;
+    }
+    .slide-page {
+      opacity: 0; transform: translateX(100%); transition: all 0.5s ease;
+      position: absolute; top: 70px; left: 0; width: 100%; padding: 20px;
+      background: #f5f5f5; display: none;
+    }
+    .slide-page.active {
+     display: block;
+     opacity: 1;
+     transform: translateX(0);
+    }
+    .back-btn {
+      margin: 10px 0 20px; padding: 8px 16px; font-size: 14px;
+      background: #6c757d; color: white; border: none; border-radius: 5px;
+      cursor: pointer; transition: background 0.3s;
+    }
+    .back-btn:hover { background: #5a6268; }
+    #addOverlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none; align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    .add-form-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 400px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .add-form-box h3 { margin-top: 0; }
+    .add-form-box label { display: block; margin-top: 8px; font-weight: bold; }
+    .add-form-box input { width: 100%; padding: 6px; margin-top: 2px; }
+    .add-form-box button { margin-top: 12px; padding: 8px 16px; border: none; cursor: pointer; }
+    .btn-primary {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+
+    .gender-options {
+      display: flex;
+      gap: 15px;
+      margin: 5px 0 10px;
+    }
+
+    .gender-options label {
+      font-weight: normal;
+      cursor: pointer;
+    }
+
+    .add-form-box input[type="text"],
+    .add-form-box input[type="email"],
+    .add-form-box input[type="number"],
+    .add-form-box input[type="date"],
+    .add-form-box input[type="time"],
+    .add-form-box input[type="datetime-local"] {
+      width: 100%;
+      padding: 6px;
+      margin-top: 2px;
+      box-sizing: border-box;
+    }
+
+    .add-form-box input[type="radio"] {
+      width: auto;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Prompt -->
+  <div id="loginOverlay">
+    <div class="login-box">
+      <h3>Admin Login</h3>
+      <input type="text" id="adminId" placeholder="Enter Admin ID" />
+      <input type="password" id="adminPassword" placeholder="Enter Password" />
+      <button onclick="validateAdmin()">Login</button>
+      <p id="loginError" style="color: red; display: none;">Invalid ID or Password</p>
+    </div>
+  </div>
+
+  <!-- Admin Panel Content -->
+  <div id="adminContent">
+    <nav class="navbar">
+      <h2 class="logo">Admin Panel</h2>
+      <button onclick="logout()">Logout</button>
+    </nav>
+
+    <main class="admin-container">
+      <h3>Select Section</h3>
+      <div class="button-group">
+        <button onclick="showPage('train')">Train</button>
+        <button onclick="showPage('flight')">Flight</button>
+        <button onclick="showPage('bus')">Bus</button>
+        <button onclick="showPage('cab')">Cab Driver</button>
+        <button onclick="showPage('cancel')">Cancellations</button>
+      </div>
+
+      <!-- Slide-in Pages -->
+      <div id="train" class="slide-page">
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+        <h2>Train Management</h2>
+        <button class="btn-primary" onclick="openAddForm('train')"> + Add New Train </button>
+        <input type="text" placeholder="Search Train..." oninput="renderList('train')" id="search-train" />
+        <div id="train-list"></div>
+      </div>
+
+      <div id="flight" class="slide-page">
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+        <h2>Flight Management</h2>
+        <button class="btn-primary" onclick="openAddForm('flight')"> + Add New Flight </button>
+        <input type="text" placeholder="Search Flight..." oninput="renderList('flight')" id="search-flight" />
+        <div id="flight-list"></div>
+      </div>
+
+      <div id="bus" class="slide-page">
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+        <h2>Bus Management</h2>
+        <button class="btn-primary" onclick="openAddForm('bus')"> + Add New Bus </button>
+        <input type="text" placeholder="Search Bus..." oninput="renderList('bus')" id="search-bus" />
+        <div id="bus-list"></div>
+      </div>
+
+      <div id="cab" class="slide-page">
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+        <h2> Driver Data</h2>
+        <button class="btn-primary" onclick="openAddForm('cab')"> + Add New Driver </button>
+        <input type="text" placeholder="Search Driver..." oninput="renderList('cab')" id="search-cab" />
+        <div id="cab-list"></div>
+      </div>
+
+      <div id="cancel" class="slide-page">
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+        <h2>Pending Cancellations</h2>
+        <div id="cancel-list">Loading...</div>
+      </div>
+    </main>
+  </div>
+
+  <div id="addOverlay">
+    <div class="add-form-box" id="addFormBox">
+    </div>
+  </div>
+
+  <script>
+    // Back to dashboard
+    function goBack() {
+      document.querySelectorAll('.slide-page').forEach(p => p.classList.remove('active'));
+    }
+
+    // ✅ Backend session-based login
+    function validateAdmin() {
+      const id = document.getElementById('adminId').value;
+      const password = document.getElementById('adminPassword').value;
+
+      fetch('/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, password }),
+        credentials: 'include'
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById('loginOverlay').style.display = 'none';
+          document.getElementById('adminContent').style.display = 'block';
+          fetchAllData();
+        } else {
+          document.getElementById('loginError').style.display = 'block';
+        }
+      })
+      .catch(() => {
+        document.getElementById('loginError').style.display = 'block';
+      });
+    }
+
+    function logout() {
+      fetch("/logout", { method: "POST", credentials: "include" })
+        .then(() => (window.location.href = "/index.html"))
+        .catch(err => console.error("Logout failed", err));
+    }
+
+    // Data containers
+    const allData = { train: [], flight: [], bus: [], cab: [] };
+
+    //fetch data
+    function fetchAllData() {
+      fetch('/admin/all-trains', { credentials: 'include' })
+        .then(r => r.json())
+        .then(data => {
+          allData.train = data;
+          console.log("Trains:", data);
+          renderList("train");
+        });
+
+      fetch('/admin/all-buses', { credentials: 'include' })
+        .then(r => r.json())
+        .then(data => {
+          allData.bus = data;
+          console.log("Buses:", data);
+          renderList("bus");
+        });
+
+      fetch('/admin/all-flights', { credentials: 'include' })
+        .then(r => r.json())
+        .then(data => {
+          allData.flight = data;
+          console.log("Flights:", data);
+          renderList("flight");
+        });
+
+      fetch('/admin/all-drivers', { credentials: 'include' })
+        .then(r => r.json())
+        .then(data => {
+          allData.cab = data;
+          console.log("Drivers:", data);
+          renderList("cab");
+        });
+    }
+
+    function showPage(id) {
+      document.querySelectorAll('.slide-page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+
+      if (id === "cancel") {
+        loadCancellations(); // ✅ only load cancellations
+      } else if (["train","bus","flight","cab"].includes(id)) {
+        renderList(id); // ✅ only call renderList when inputs exist
+      }
+    }
+
+    function renderList(type) {
+      const container = document.getElementById(`${type}-list`);
+      const searchTerm = document.getElementById(`search-${type}`).value.toLowerCase();
+      const filtered = allData[type].filter(i => JSON.stringify(i).toLowerCase().includes(searchTerm));
+      container.innerHTML = filtered.length
+        ? `<ul style="list-style:none;padding:0;">${filtered.map(i => `<li style="padding:10px;border-bottom:1px solid #ccc;">${formatItem(i,type)}</li>`).join('')}</ul>`
+        : `<p>No ${type} records found.</p>`;
+    }
+
+    function formatItem(item, type) {
+      let fields = ``;
+
+      if (type === "train") {
+        fields += `
+          <div><strong>Train Name:</strong> ${item.trainName}</div>
+          <div><strong>Number:</strong> ${item.trainNumber}</div>
+          <div>${item.from} → ${item.to}</div>
+          <div><strong>Type:</strong> ${item.type}</div>
+          <div><strong>Duration:</strong> ${item.duration || "N/A"}</div>
+          <div>
+            <strong>Departure:</strong> ${item.departureTime || item.departure || "N/A"} |
+            <strong>Arrival:</strong> ${item.arrivalTime || item.arrival || "N/A"}
+          </div>`;
+        if (item.classes) {
+          Object.entries(item.classes).forEach(([cls, val]) => {
+            fields += `<div><strong>${cls}</strong>: Fare ₹${val.fare}, Seats ${val.availableSeats}</div>`;
+          });
+        }
+      }
+
+      if (type === "bus") {
+        fields += `
+          <div><strong>Operator:</strong> ${item.operator}</div>
+          <div><strong>Number:</strong> ${item.busNumber}</div>
+          <div>${item.from} → ${item.to}</div>
+          <div><strong>Type:</strong> ${item.type}</div>
+          <div><strong>Departure:</strong> ${item.departureTime} | <strong>Arrival:</strong> ${item.arrivalTime}</div>
+          <div><strong>Fare:</strong> ₹${item.fare}</div>
+          <div><strong>Seats Available:</strong> ${item.seatsAvailable}</div>`;
+      }
+
+      if (type === "flight") {
+        fields += `
+          <div><strong>Flight:</strong> ${item.airline} (${item.flightNumber})</div>
+          <div>${item.from} → ${item.to}</div>
+          <div><strong>Duration:</strong> ${item.duration}</div>
+          <div><strong>Departure:</strong> ${item.departureTime} | <strong>Arrival:</strong> ${item.arrivalTime}</div>
+          <div><strong>Type:</strong> ${item.flightType}</div>`;
+        if (item.classes) {
+          Object.entries(item.classes).forEach(([cls,val])=>{
+            fields += `<div><strong>${cls}</strong>: Fare ₹${val.fare}, Seats ${val.availableSeats}</div>`;
+          });
+        }
+      }
+
+      if (type === "cab") {
+        fields += `
+          <div><strong>First Name:</strong> ${item.firstName}</div>
+          <div><strong>Last Name:</strong> ${item.lastName}</div>
+          <div><strong>Gender:</strong> ${item.gender}</div>
+          <div><strong>Date of Birth:</strong> ${item.dob}</div>
+          <div><strong>Email:</strong> ${item.email}</div>
+          <div><strong>Phone:</strong> ${item.phone}</div>
+          <div><strong>License:</strong> ${item.license}</div>
+          <div><strong>Number Plate:</strong> ${item.numberPlate}</div>
+          <div><strong>Vehicle Type:</strong> ${item.type ? item.type.toUpperCase() : ""}</div>
+        `;
+      }
+
+      // Buttons (common for all types)
+      fields += `
+        <div style="margin-top:10px;">
+          <button style="background:#28a745;color:white;border:none;padding:6px 12px;margin-right:6px;border-radius:4px;cursor:pointer;"
+            onclick="editItem('${type}', '${item._id}')">Edit</button>
+          <button style="background:#dc3545;color:white;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;"
+            onclick="deleteItem('${type}', '${item._id}')">Delete</button>
+        </div>
+      `;
+
+      return `<div style="border:1px solid #ccc;padding:10px;border-radius:8px;">${fields}</div>`;
+    }
+
+    function editItem(type, id) {
+      const item = allData[type].find(i => i._id === id);
+      if (!item) return alert("Item not found!");
+
+      const container = document.querySelector(`[onclick="editItem('${type}', '${id}')"]`).closest("div");
+
+      let formHtml = Object.keys(item)
+        .filter(k => k !== "_id" && k !== "__v")
+        .map(key => {
+          if (key === "classes" && typeof item[key] === "object") {
+            // Render nested fare + seats for each class
+            return `
+              <label style="display:block;margin-top:8px;"><strong>Classes:</strong></label>
+              ${Object.entries(item[key]).map(([cls, val]) => `
+                <div style="margin-left:15px; margin-top:5px; border-left:2px solid #ccc; padding-left:8px;">
+                  <label><strong>${cls} Fare:</strong></label>
+                  <input type="number" name="classes.${cls}.fare" value="${val.fare}" style="width:100%;padding:6px;margin-top:2px;">
+                  <label><strong>${cls} Seats:</strong></label>
+                  <input type="number" name="classes.${cls}.availableSeats" value="${val.availableSeats}" style="width:100%;padding:6px;margin-top:2px;">
+                </div>
+              `).join("")}
+            `;
+          } else {
+            return `
+              <label style="display:block;margin-top:5px;"><strong>${key}:</strong></label>
+              <input type="text" name="${key}" value="${item[key]}" style="width:100%;padding:6px;margin-top:2px;">
+            `;
+          }
+        })
+        .join("");
+
+      formHtml += `
+        <div style="margin-top:10px;">
+          <button style="background:#28a745;color:white;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;"
+            onclick="updateItem('${type}', '${id}', this)">Save</button>
+          <button style="background:#6c757d;color:white;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;margin-left:6px;"
+            onclick="renderList('${type}')">Cancel</button>
+        </div>
+      `;
+
+      container.innerHTML = `<div style="border:1px solid #ccc;padding:10px;border-radius:8px;">${formHtml}</div>`;
+    }
+
+    function deleteItem(type, id) {
+      // Prompt admin to type DELETE to confirm
+      const confirmation = prompt(`Type DELETE to confirm deletion of this ${type}:`);
+      if (confirmation !== "DELETE") {
+        alert("Deletion cancelled. You must type DELETE to confirm.");
+        return;
+      }
+
+      fetch(`/admin/delete-${type}/${id}`, { method: "DELETE" })
+        .then(r => r.json())
+        .then(res => {
+          alert(res.message || `${type} deleted successfully`);
+          fetchAllData(); // Refresh list after deletion
+          renderList(type);
+        })
+        .catch(err => console.error("Delete failed", err));
+    }
+
+    async function updateItem(type, id, btn) {
+      const formContainer = btn.closest("div").parentElement;
+      const inputs = formContainer.querySelectorAll("input");
+
+      let updatedData = {};
+
+      inputs.forEach(input => {
+        const nameParts = input.name.split(".");
+        if (nameParts[0] === "classes") {
+          const [, cls, field] = nameParts;
+          updatedData.classes = updatedData.classes || {};
+          updatedData.classes[cls] = updatedData.classes[cls] || {};
+          updatedData.classes[cls][field] = isNaN(input.value) ? input.value : Number(input.value);
+        } else {
+          updatedData[input.name] = input.value;
+        }
+      });
+
+      const res = await fetch(`/admin/update-${type}/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+        credentials: "include"
+      });
+
+      if (res.ok) {
+        alert(`${type} updated successfully!`);
+        fetchAllData();
+        renderList(type);
+      } else {
+        alert("Update failed!");
+      }
+    }
+
+    function openAddForm(type) {
+      const overlay = document.getElementById("addOverlay");
+      const box = document.getElementById("addFormBox");
+
+      let formHtml = `<h3>Add New ${type.charAt(0).toUpperCase() + type.slice(1)}</h3><form id="addForm">`;
+
+      if (type === "train") {
+        formHtml += `
+          <label>Train Name</label><input name="trainName" required>
+          <label>Train Number</label><input name="trainNumber" required>
+          <label>From</label><input name="from" required>
+          <label>To</label><input name="to" required>
+          <label>Type</label><input name="type" required>
+          <label>Departure Time</label><input type="time" name="departureTime" required>
+            <select name="departureAmPm" required>
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+
+          <label>Arrival Time</label><input type="time" name="arrivalTime" required>
+            <select name="arrivalAmPm" required>
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+          <label>Duration</label><input name="duration" required>
+          <h4>Classes</h4>
+          <label>SL Fare</label><input type="number" name="classes.SL.fare" required>
+          <label>SL Seats</label><input type="number" name="classes.SL.availableSeats" required>
+          <label>3A Fare</label><input type="number" name="classes.3A.fare" required>
+          <label>3A Seats</label><input type="number" name="classes.3A.availableSeats" required>
+          <label>2A Fare</label><input type="number" name="classes.2A.fare" required>
+          <label>2A Seats</label><input type="number" name="classes.2A.availableSeats" required>
+          <label>1A Fare</label><input type="number" name="classes.1A.fare" required>
+          <label>1A Seats</label><input type="number" name="classes.1A.availableSeats" required>
+        `;
+      }
+
+      if (type === "flight") {
+      formHtml += `
+        <label>Flight Number</label><input name="flightNumber" required>
+        <label>Airline</label><input name="airline" required>
+        <label>From</label><input name="from" required>
+        <label>To</label><input name="to" required>
+        <label>Departure Date</label><input type="date" name="departureDate" required>
+        <label>Departure Time</label><input type="time" name="departureTime" required>
+        <label>Arrival Date</label><input type="date" name="arrivalDate" required>
+        <label>Arrival Time</label><input type="time" name="arrivalTime" required>
+        <label>Duration</label><input name="duration" required>
+        <label>Flight Type</label><input name="flightType" required>
+        <h4>Classes</h4>
+        <label>Economy Fare</label><input type="number" name="classes.Economy.fare" required>
+        <label>Economy Seats</label><input type="number" name="classes.Economy.availableSeats" required>
+        <label>Business Fare</label><input type="number" name="classes.Business.fare" required>
+        <label>Business Seats</label><input type="number" name="classes.Business.availableSeats" required>
+        <label>First Fare</label><input type="number" name="classes.First.fare" required>
+        <label>First Seats</label><input type="number" name="classes.First.availableSeats" required>
+      `;
+    }
+
+      if (type === "bus") {
+        formHtml += `
+          <label>Bus Number</label><input name="busNumber" required>
+          <label>Operator</label><input name="operator" required>
+          <label>From</label><input name="from" required>
+          <label>To</label><input name="to" required>
+          <label>Departure Time</label><input type="time" name="departureTime" required>
+            <select name="departureAmPm" required>
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+
+          <label>Arrival Time</label><input type="time" name="arrivalTime" required>
+            <select name="arrivalAmPm" required>
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+          <label>Type</label><input name="type" required>
+          <label>Fare</label><input type="number" name="fare" required>
+          <label>Seats Available</label><input type="number" name="seatsAvailable" required>
+        `;
+      }
+
+      if (type === "cab") {
+        formHtml += `
+          <label>First Name</label><input name="firstName" required>
+          <label>Last Name</label><input name="lastName" required>
+          <label>Gender</label>
+          <div class="gender-options">
+            <label><input type="radio" name="gender" value="Male" required> Male</label>
+            <label><input type="radio" name="gender" value="Female"> Female</label>
+            <label><input type="radio" name="gender" value="Other"> Other</label>
+          </div>
+          <label>Date of Birth</label><input type="date" name="dob" required>
+          <label>Email</label><input type="email" name="email" required>
+          <label>Phone</label><input name="phone" required>
+          <label>License</label><input name="license" required>
+          <label>Number Plate</label><input name="numberPlate" required>
+          <label>Vehicle Type</label><input name="type" required>
+        `;
+      }
+
+      formHtml += `
+          <button type="button" style="background:#28a745;color:white;" onclick="submitAdd('${type}')">Save</button>
+          <button type="button" style="background:#dc3545;color:white;margin-left:6px;" onclick="closeAddForm()">Cancel</button>
+        </form>`;
+
+      box.innerHTML = formHtml;
+      overlay.style.display = "flex";
+    }
+
+    function closeAddForm() {
+      document.getElementById("addOverlay").style.display = "none";
+    }
+
+    async function submitAdd(type) {
+      const form = document.getElementById("addForm");
+      const inputs = form.querySelectorAll("input, select"); // include selects
+      let newData = {};
+
+      inputs.forEach(input => {
+        const nameParts = input.name.split(".");
+        if (nameParts[0] === "classes") {
+          // handle nested classes object
+          const [, cls, field] = nameParts;
+          newData.classes = newData.classes || {};
+          newData.classes[cls] = newData.classes[cls] || {};
+          newData.classes[cls][field] = isNaN(input.value) ? input.value : Number(input.value);
+        } else {
+          newData[input.name] = input.value;
+        }
+      });
+
+      // ✅ BUS → time format: "hh:mm AM/PM"
+      if (type === "bus") {
+        newData.departureTime = `${newData.departureTime} ${newData.departureAmPm}`;
+        newData.arrivalTime = `${newData.arrivalTime} ${newData.arrivalAmPm}`;
+
+        delete newData.departureAmPm;
+        delete newData.arrivalAmPm;
+      }
+
+      // ✅ Train → time format: "hh:mm AM/PM"
+      if (type === "train") {
+        if (newData.departureTime && newData.departureAmPm) {
+          newData.departureTime = `${newData.departureTime} ${newData.departureAmPm}`;
+        }
+        if (newData.arrivalTime && newData.arrivalAmPm) {
+          newData.arrivalTime = `${newData.arrivalTime} ${newData.arrivalAmPm}`;
+        }
+
+        delete newData.departureAmPm;
+        delete newData.arrivalAmPm;
+
+        if (!newData.duration) {
+          newData.duration = "N/A";
+        }
+      }
+
+      // ✅ FLIGHT → ISO datetime format
+      if (type === "flight") {
+        const depDate = newData.departureDate;  // yyyy-mm-dd
+        const arrDate = newData.arrivalDate;    // yyyy-mm-dd
+        const depTime = newData.departureTime;  // hh:mm
+        const arrTime = newData.arrivalTime;    // hh:mm
+
+        // Build ISO strings in UTC (Z at end)
+        newData.departureTime = new Date(`${depDate}T${depTime}:00Z`).toISOString();
+        newData.arrivalTime = new Date(`${arrDate}T${arrTime}:00Z`).toISOString();
+
+        // cleanup
+        delete newData.departureDate;
+        delete newData.arrivalDate;
+        delete newData.departureAmPm;
+        delete newData.arrivalAmPm;
+      }
+
+      const res = await fetch(`/admin/add-${type}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+        credentials: "include"
+      });
+
+      if (res.ok) {
+        alert(`${type} added successfully!`);
+        closeAddForm();
+        fetchAllData();
+        renderList(type);
+      } else {
+        alert("Add failed!");
+      }
+    }
+
+    async function loadCancellations() {
+      const res = await fetch("/admin/cancellations");
+      const data = await res.json();
+      const container = document.getElementById("cancel-list");
+
+      if (!data.length) {
+        container.innerHTML = "<p>No pending cancellations.</p>";
+        return;
+      }
+
+      container.innerHTML = data.map(c => {
+        // Extract details safely
+        const d = c.details || {};
+        const passengers = d.passengers ? d.passengers.map(p => p.name).join(", ") : "N/A";
+        const seats = d.seatsBooked ? d.seatsBooked.join(", ") : "N/A";
+
+        return `
+          <div style="border:1px solid #ccc; padding:12px; margin-bottom:10px; border-radius:6px; background:#fff;">
+            <p><strong>User:</strong> ${c.userEmail}</p>
+            <p><strong>Ride Type:</strong> ${c.type}</p>
+            <p><strong>Status:</strong> ${c.status}</p>
+            <p><strong>Booked On:</strong> ${new Date(c.dateBooked).toLocaleString()}</p>
+            
+            <h4>Booking Details</h4>
+            <p><strong>From:</strong> ${d.from || "N/A"} → <strong>To:</strong> ${d.to || "N/A"}</p>
+            <p><strong>Journey Date:</strong> ${d.journeyDate || "N/A"}</p>
+            <p><strong>Fare:</strong> ₹${d.fare || "N/A"}</p>
+            <p><strong>Phone:</strong> ${d.phone || "N/A"}</p>
+            <p><strong>Passengers:</strong> ${passengers}</p>
+            ${d.busName ? `<p><strong>Bus:</strong> ${d.busName} (${d.busType || ""})</p>` : ""}
+            ${seats !== "N/A" ? `<p><strong>Seats Booked:</strong> ${seats}</p>` : ""}
+            
+            <div style="margin-top:10px;">
+              <button style="background:#28a745;color:white;border:none;padding:6px 12px;margin-right:10px;cursor:pointer;border-radius:4px;" 
+                onclick="handleCancellation('${c.bookingId}','accept')">Accept</button>
+              <button style="background:#dc3545;color:white;border:none;padding:6px 12px;cursor:pointer;border-radius:4px;" 
+                onclick="handleCancellation('${c.bookingId}','reject')">Reject</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function handleCancellation(bookingId, action) {
+      const res = await fetch(`/admin/cancellations/${bookingId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action })
+      });
+      const data = await res.json();
+      alert(data.message);
+      loadCancellations(); // refresh list
+    }
+  </script>
+</body>
+</html>

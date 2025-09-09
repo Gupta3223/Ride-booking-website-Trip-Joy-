@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Ticket Booking</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <h2 class="logo">
+            <img src="logo.jpg" alt="RideBooking Logo">
+        </h2>
+        <ul>
+            <li><a href="index.html#home">Home</a></li>
+            <li><a href="index.html#about">About Us</a></li>
+            <li><a href="index.html#help">Help</a></li>
+            <li><button class="login-btn">Login</button></li>
+        </ul>
+    </nav>
+
+    <!-- Train Ticket Booking Section -->
+    <section class="ride-booking">
+        <h1>Book Your Train Ticket</h1>
+        <p>Search and book train tickets across India with ease.</p>
+
+        <form id="trainSearchForm" class="input-container">
+            <!-- From Station -->
+            <div class="input-box">
+                <div class="label-row">
+                    <i class="fas fa-train icon"></i>
+                    <label for="from"><strong>From Station</strong></label>
+                </div>
+                <input type="text" id="from" name="from" placeholder="From (e.g. Delhi - NDLS)" required>
+            </div>
+
+            <div class="input-box">
+                <div class="label-row">
+                    <i class="fas fa-map-marker-alt icon"></i>
+                    <label for="to"><strong>To Station</strong></label>
+                </div>
+                <input type="text" id="to" name="to" placeholder="To (e.g. Mumbai - CSMT)" required>
+            </div>
+
+            <div class="input-box">
+                <div class="label-row">
+                    <i class="fas fa-calendar icon"></i>
+                    <label for="date"><strong>Travel Date</strong></label>
+                </div>
+                <input type="date" id="date" name="date" required>
+            </div>
+            
+            <div class="input-box">
+                <div class="label-row">
+                    <i class="fas fa-chair icon"></i>
+                    <label for="class"><strong>Travel Class</strong></label>
+                </div>
+                <select id="class" name="class" required>
+                    <option value="">Select Class</option>
+                    <option value="sleeper">Sleeper (SL)</option>
+                    <option value="ac3">AC 3 Tier (3A)</option>
+                    <option value="ac2">AC 2 Tier (2A)</option>
+                    <option value="ac1">AC First Class (1A)</option>
+                    <option value="cc">Chair Car (CC)</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="button-container">
+                <button class="black-btn" type="submit">Search Trains</button>
+            </div>
+        </form>
+
+        <!-- Display Results -->
+        <div id="train-results"></div>
+
+        <script>
+            document.getElementById("trainSearchForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                const from = document.getElementById("from").value;
+                const to = document.getElementById("to").value;
+                const selectedClassRaw = document.getElementById("class").value;
+
+                const classMap = {
+                    sleeper: "SL",
+                    ac3: "3A",
+                    ac2: "2A",
+                    ac1: "1A",
+                    cc: "CC"
+                };
+                const travelClass = classMap[selectedClassRaw];
+
+                const response = await fetch(`http://localhost:5000/search-trains?from=${from}&to=${to}&class=${travelClass}`);
+                const trains = await response.json();
+
+                const resultsDiv = document.getElementById("train-results");
+                resultsDiv.innerHTML = trains.length
+                    ? trains.map(train => `
+                        <div class="train-card">
+                            <p><strong>${train.type}</strong> - ${train.trainName || "Train"} (${train.trainNumber || ""})</p>
+                            <p><b>${train.from}</b> → <b>${train.to}</b></p>
+                            <p>Available Classes: ${Object.keys(train.classes).join(", ")}</p>
+                            <button class="book-btn" data-train='${JSON.stringify(train)}'>Book Ticket</button>
+                        </div>
+                    `).join("")
+                    : "<p>No trains found matching your criteria.</p>";
+
+                // Attach event listeners to the new buttons
+                document.querySelectorAll(".book-btn").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        const trainData = JSON.parse(this.getAttribute("data-train"));
+                        const journeyDate = document.getElementById("date").value;
+
+                        // ✅ Map class again for booking
+                        const mappedClass = classMap[selectedClassRaw];
+
+                        localStorage.setItem("selectedTrain", JSON.stringify({
+                            ...trainData,
+                            selectedClass: mappedClass
+                        }));
+                        localStorage.setItem("journeyDate", journeyDate);
+
+                        window.location.href = "train-booking.html";
+                    });
+                });
+            });
+        </script>
+    </section>
+</body>
+</html>

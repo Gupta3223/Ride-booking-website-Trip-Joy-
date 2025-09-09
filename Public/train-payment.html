@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Train Payment - TripJoy Ride</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script defer src="script.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <h2 class="logo"><img src="logo.jpg" alt="RideBooking Logo"></h2>
+  <ul>
+    <li><a href="index.html#home">Home</a></li>
+    <li><a href="index.html#about">About Us</a></li>
+    <li><a href="index.html#help">Help</a></li>
+    <li><button class="login-btn" onclick="openLoginModal()">Login</button></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <div class="summary">
+    <h2>Payment Summary</h2>
+    <p><strong>Train:</strong> <span id="ride-name"></span></p>
+    <p><strong>Date:</strong> <span id="journey-date"></span></p>
+    <p><strong>From:</strong> <span id="from-station"></span></p>
+    <p><strong>To:</strong> <span id="to-station"></span></p>
+    <p><strong>Passengers:</strong> <span id="passenger-count"></span></p>
+    <p><strong>Class:</strong> <span id="train-class"></span></p>
+    <p><strong>Fare per Passenger:</strong> ₹<span id="fare-per-passenger-train"></span></p>
+    <div class="total">Total Fare: ₹<span id="total-fare"></span></div>
+  </div>
+
+  <div class="payment-form">
+    <h2>Enter Payment Details</h2>
+    <form id="paymentForm">
+      <label for="name">Name on Card</label>
+      <input type="text" id="name" required>
+      <label for="cardNumber">Card Number</label>
+      <input type="text" id="cardNumber" maxlength="16" required>
+      <label for="expiryMonth">Expiry Date</label>
+      <div class="expiry-fields">
+        <select id="expiryMonth" required>
+          <option value="">MM</option><option>01</option><option>02</option><option>03</option>
+          <option>04</option><option>05</option><option>06</option><option>07</option>
+          <option>08</option><option>09</option><option>10</option><option>11</option><option>12</option>
+        </select>
+        <select id="expiryYear" required>
+          <option value="">YY</option><option>24</option><option>25</option><option>26</option><option>27</option>
+        </select>
+      </div>
+      <label for="cvv">CVV</label>
+      <input type="text" id="cvv" maxlength="3" required>
+      <button type="submit">Pay ₹<span id="pay-amount"></span></button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const selectedRide = JSON.parse(localStorage.getItem('selectedTrain'));
+  const passengerCount = parseInt(localStorage.getItem('passengerCount') || 0); // Corrected
+  const journeyDate = localStorage.getItem('journeyDate');
+  const travelClass = selectedRide?.selectedClass || 'Not specified';
+  const passengerName = localStorage.getItem('passengerName') || 'Passenger';
+  const farePerPassenger = parseFloat(localStorage.getItem('farePerPassenger'));
+  const totalFare = parseFloat(localStorage.getItem('totalFare'));
+
+  if (!selectedRide) {
+    alert("No train booking found.");
+    window.location.href = "index.html";
+  }
+
+  document.getElementById('ride-name').innerText = `${selectedRide.trainName} (${selectedRide.trainNumber})`;
+  document.getElementById('journey-date').innerText = new Date(journeyDate).toDateString();
+  document.getElementById('from-station').innerText = selectedRide.from;
+  document.getElementById('to-station').innerText = selectedRide.to;
+  document.getElementById('passenger-count').innerText = passengerCount;
+  // Retrieve children under 5
+  const childrenUnder5 = JSON.parse(localStorage.getItem('childrenUnder5')) || [];
+
+  if (childrenUnder5.length > 0) {
+    const summaryDiv = document.querySelector('.summary');
+
+    const childHeader = document.createElement('h3');
+    childHeader.innerText = "Children Under 5 (Free)";
+    summaryDiv.appendChild(childHeader);
+
+    childrenUnder5.forEach((child, index) => {
+      const childPara = document.createElement('p');
+      childPara.innerText = `${index + 1}. ${child.name}, Age: ${child.age}`;
+      summaryDiv.appendChild(childPara);
+    });
+  }
+
+  document.getElementById('train-class').innerText = travelClass;
+
+  document.getElementById('fare-per-passenger-train').innerText = farePerPassenger.toFixed(2);
+  document.getElementById('total-fare').innerText = totalFare.toFixed(2);
+  document.getElementById('pay-amount').innerText = totalFare.toFixed(2);
+
+  document.getElementById('paymentForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+     alert(`✅ Payment Successful!\n\nThank you, ${passengerName}, for booking a flight with TripJoy.`);
+    const viewBtn = document.createElement('button');
+    viewBtn.textContent = "🎫 View E-Ticket";
+    viewBtn.style.marginTop = "20px";
+    viewBtn.style.padding = "10px 20px";
+    viewBtn.style.fontSize = "16px";
+    viewBtn.style.cursor = "pointer";
+    viewBtn.onclick = () => window.location.href = "train-eticket.html";
+    document.querySelector('.payment-form').appendChild(viewBtn);
+  });
+
+</script>
+</body>
+</html>

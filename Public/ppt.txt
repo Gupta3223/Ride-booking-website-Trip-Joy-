@@ -1,0 +1,42 @@
+Slide 1: Title Slide
+Speaking Notes:
+
+“Good morning, everyone.
+Today, we’re diving into a question that’s on everyone’s mind — Is Artificial Intelligence a threat to human jobs, or is it a doorway to new opportunities?
+As AI continues to evolve, so does its impact on how we work, live, and connect.
+Let’s explore both sides of the argument with a balanced perspective.”
+
+Slide 2: The Threat Perspective
+Speaking Notes:
+
+“Let’s begin with the threats.
+AI and automation are already transforming industries like manufacturing, retail, and logistics.
+Tasks that were once manual — such as quality checks or shelf stocking — are now handled by machines.
+In customer service, we see chatbots replacing entry-level jobs. In data-heavy roles, algorithms can analyze faster and more accurately than humans.
+These changes raise a valid concern — low-skill, repetitive jobs are increasingly at risk, which could lead to unemployment if we’re not prepared.”
+
+Slide 3: The Opportunity Angle
+Speaking Notes:
+“Now, on the flip side — AI also opens up tremendous opportunities.
+Rather than replacing us entirely, AI can enhance our productivity by automating routine work and freeing us for creative and strategic thinking.
+New roles are emerging in fields like AI ethics, data science, prompt engineering, and human-AI collaboration.
+Moreover, AI improves safety, reduces human error, and supports flexible work environments.
+In many ways, AI is enabling a better quality of work — not just more of it.”
+
+Slide 4: Balanced Viewpoint
+Speaking Notes:
+“So, is AI a threat or an opportunity?
+The truth is — it depends on how we approach it.
+Yes, there will be job losses, skill gaps, and wage pressure. But at the same time, there’s job creation, upskilling potential, and huge gains in productivity.
+The question is not ‘Will AI take our jobs?’, but rather ‘Are we ready to evolve alongside AI?’
+Just like the Industrial Revolution or the rise of the internet, this is another transformative wave.”
+
+Slide 5: Conclusion & Call to Action
+Speaking Notes:
+“To prepare for the future, we must act now.
+That means continuously learning new skills, adapting to new technologies, and finding ways to combine human creativity with AI efficiency.
+Change is inevitable, but fear isn’t necessary.
+I’d like to end with this thought-provoking quote:
+‘AI will not replace you. A person using AI will.’
+
+Thank you.”

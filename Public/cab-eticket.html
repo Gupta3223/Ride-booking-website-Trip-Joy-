@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cab E-Ticket - TripJoy Ride</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="ticket-container">
+    <h2>E-Ride Slip</h2>
+
+    <div class="section">
+      <h3>Ride Details</h3>
+      <p><strong>Booking Type:</strong> <span id="bookingType"></span></p>
+      <p><strong>Passenger Name:</strong> <span id="name"></span></p>
+      <p><strong>Mobile:</strong> <span id="mobile"></span></p>
+      <p><strong>From:</strong> <span id="from"></span></p>
+      <p><strong>To:</strong> <span id="to"></span></p>
+      <p><strong>Cab Type:</strong> <span id="cabType"></span></p>
+      <p><strong>Fare:</strong> ₹<span id="fare"></span></p>
+      <p><strong>Booking Time:</strong> <span id="bookingTime"></span></p>
+      <p id="scheduleDateLine" style="display:none;"><strong>Scheduled Date:</strong> <span id="scheduledDate"></span></p>
+      <p id="scheduleTimeLine" style="display:none;"><strong>Scheduled Time:</strong> <span id="scheduledTime"></span></p>
+    </div>
+
+    <div class="section">
+      <h3>Driver Details</h3>
+      <p><strong>Captain Name:</strong> <span id="driverName"></span></p>
+      <p><strong>Vehicle Number:</strong> <span id="vehicleNumber"></span></p>
+      <p><strong>Contact:</strong> <span id="driverContact"></span></p>
+    </div>
+
+    <div class="section">
+      <h3>Ride OTP</h3>
+      <div class="otp-box" id="otpDisplay">----</div>
+    </div>
+
+    <div class="buttons">
+      <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+      <button class="home-btn" onclick="window.location.href='index.html'">🏠 Back to Home</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const rideData = {
+        name: localStorage.getItem("cabName"),
+        phone: localStorage.getItem("cabMobile"),
+        from: localStorage.getItem("pickup"),
+        to: localStorage.getItem("drop"),
+        cabType: localStorage.getItem("cabType"),
+        fare: Number(localStorage.getItem("finalFare") || 0),
+        bookingTime: new Date().toLocaleString(),
+        scheduleDate: localStorage.getItem("rideDate") || null,
+        scheduleTime: localStorage.getItem("rideTime") || null,
+        driverName: localStorage.getItem("driverName") || "N/A",
+        vehicleNumber: localStorage.getItem("vehicleNumber") || "N/A",
+        driverContact: localStorage.getItem("driverContact") || "N/A",
+        otp: localStorage.getItem("rideOTP") || "----",
+        isPreBooking: localStorage.getItem("isPreBooking") === "true"
+      };
+
+      // Display on ticket
+      document.getElementById("name").innerText = rideData.name || "N/A";
+      document.getElementById("mobile").innerText = rideData.phone || "N/A";
+      document.getElementById("from").innerText = rideData.from || "N/A";
+      document.getElementById("to").innerText = rideData.to || "N/A";
+      document.getElementById("cabType").innerText = rideData.cabType || "N/A";
+      document.getElementById("fare").innerText = rideData.fare || "0";
+      document.getElementById("bookingType").innerText = rideData.isPreBooking ? "Pre-Booking" : "Direct Booking";
+      document.getElementById("bookingTime").innerText = rideData.bookingTime;
+      document.getElementById("driverName").innerText = rideData.driverName;
+      document.getElementById("vehicleNumber").innerText = rideData.vehicleNumber;
+      document.getElementById("driverContact").innerText = rideData.driverContact;
+      document.getElementById("otpDisplay").innerText = rideData.otp;
+
+      if (rideData.scheduleDate) {
+        document.getElementById("scheduledDate").innerText = new Date(rideData.scheduleDate).toDateString();
+        document.getElementById("scheduleDateLine").style.display = "block";
+      }
+      if (rideData.scheduleTime) {
+        document.getElementById("scheduledTime").innerText = rideData.scheduleTime;
+        document.getElementById("scheduleTimeLine").style.display = "block";
+      }
+
+      // Send to backend
+      const bookingEntry = {
+        type: "cab",
+        dateBooked: new Date().toISOString(),
+        details: rideData
+      };
+
+      fetch('/save-booking-history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(bookingEntry)
+      })
+      .then(res => res.json())
+      .then(data => console.log('✅ Cab booking saved:', data.message))
+      .catch(err => console.error('❌ Error saving cab booking:', err));
+    });
+  </script>
+</body>
+</html>

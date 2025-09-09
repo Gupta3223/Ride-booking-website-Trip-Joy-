@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Ride History - TripJoy</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
+      font-family: 'Poppins', sans-serif;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+    #history-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .history-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      line-height: 1.6;
+    }
+    .history-card h3 {
+      margin-top: 0;
+      color: #4a4a4a;
+    }
+    .history-card p {
+      margin: 5px 0;
+    }
+    .passenger-list {
+      margin-left: 20px;
+    }
+    .history-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .cancel-btn {
+      margin-top: auto; /* pushes button to bottom */
+      align-self: flex-start; /* left aligned, change to center if needed */
+    }
+    .cancel-btn:hover {
+      background: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <h2></h2>
+    <ul>
+      <li><a href="index.html#home">Home</a></li>
+      <li><a href="index.html#about">About Us</a></li>
+      <li><a href="index.html#help">Help</a></li>
+    </ul>
+  </nav>
+
+  <h2>🕓 My Ride Booking History</h2>
+  <div id="history-container">Loading history...</div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("history-container");
+      container.innerHTML = "Loading history...";
+
+      fetch('/booking-history', { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+          container.innerHTML = "";
+
+          if (!data.history || data.history.length === 0) {
+            container.innerHTML = "<p>No history found.</p>";
+            return;
+          }
+
+          data.history.reverse().forEach(entry => {
+            const details = entry.details;
+            const div = document.createElement("div");
+            div.className = "history-card";
+
+            let passengersHTML = "";
+            if (Array.isArray(details.passengers)) {
+              passengersHTML = `<div><strong>Passengers:</strong><ul class="passenger-list">`;
+              details.passengers.forEach(p => {
+                if (entry.type === "train") {
+                  passengersHTML += `<li>${p.name}, Age: ${p.age}, Gender: ${p.gender}</li>`;
+                } else if (entry.type === "flight") {
+                  passengersHTML += `<li>${p.name}, Gender: ${p.gender || 'N/A'}, DOB: ${p.dob ? new Date(p.dob).toDateString() : 'N/A'}</li>`;
+                } else {
+                  passengersHTML += `<li>${p.name}</li>`;
+                }
+              });
+              passengersHTML += `</ul></div>`;
+            }
+
+            let childrenHTML = "";
+            if (Array.isArray(details.childrenUnder5) && details.childrenUnder5.length > 0) {
+              childrenHTML = `<div><strong>Children under 5 (No Fare):</strong><ul class="passenger-list">`;
+              details.childrenUnder5.forEach(child => {
+                childrenHTML += `<li>${child.name}, Age: ${child.age}, Gender: ${child.gender}</li>`;
+              });
+              childrenHTML += `</ul></div>`;
+            }
+
+            // Render different layout for cab
+            if (entry.type === "cab") {
+              div.innerHTML = `
+                <h3>CAB Booking</h3>
+                <p><strong>Booking Type:</strong> ${details.isPreBooking ? "Pre-Booking" : "Direct Booking"}</p>
+                <p><strong>Passenger:</strong> ${details.name}</p>
+                <p><strong>Phone:</strong> ${details.phone}</p>
+                <p><strong>From:</strong> ${details.from}</p>
+                <p><strong>To:</strong> ${details.to}</p>
+                <p><strong>Cab Type:</strong> ${details.cabType}</p>
+                <p><strong>Fare:</strong> ₹${details.fare}</p>
+                <p><strong>Booking Time:</strong> ${details.bookingTime}</p>
+                ${details.scheduleDate ? `<p><strong>Scheduled Date:</strong> ${new Date(details.scheduleDate).toDateString()}</p>` : ""}
+                ${details.scheduleTime ? `<p><strong>Scheduled Time:</strong> ${details.scheduleTime}</p>` : ""}
+                <p><strong>Driver:</strong> ${details.driverName} | <strong>Vehicle:</strong> ${details.vehicleNumber}</p>
+                <p><strong>Ride OTP:</strong> ${details.otp}</p>
+              `;
+            } else if (entry.type === "flight") {
+              div.innerHTML = `
+                <h3>FLIGHT Booking</h3>
+                <p><strong>Date:</strong> ${new Date(entry.dateBooked).toLocaleString()}</p>
+                <p><strong>Flight:</strong> ${details.airline} (${details.flightNumber})</p>
+                <p><strong>Route:</strong> ${details.from} → ${details.to}</p>
+                <p><strong>Class:</strong> ${details.travelClass}</p>
+                <p><strong>Seats:</strong> ${Array.isArray(details.seats) ? details.seats.join(", ") : "N/A"}</p>
+                <p><strong>Journey Date:</strong> ${new Date(details.journeyDate).toDateString()}</p>
+                <p><strong>Fare:</strong> ₹${details.fare}</p>
+                <p><strong>Fare per Passenger:</strong> ₹${details.farePerPassenger || "N/A"}</p>
+                <p><strong>Phone:</strong> ${details.phone}</p>
+                <p><strong>Email:</strong> ${details.email || "N/A"}</p>
+                ${passengersHTML}
+              `;
+            } else {
+              // Train or Bus fallback
+              div.innerHTML = `
+                <h3>${entry.type.toUpperCase()} Booking</h3>
+                <p><strong>Date:</strong> ${new Date(entry.dateBooked).toLocaleString()}</p>
+                ${details.journeyDate ? `<p><strong>Journey Date:</strong> ${new Date(details.journeyDate).toDateString()}</p>` : ""}
+                <p><strong>From:</strong> ${details.from || 'N/A'}</p>
+                <p><strong>To:</strong> ${details.to || 'N/A'}</p>
+                ${details.trainName ? `<p><strong>Train:</strong> ${details.trainName} (${details.trainNumber})</p>` : ""}
+                ${details.busName ? `<p><strong>Bus:</strong> ${details.busName}</p>` : ""}
+                ${details.busType ? `<p><strong>Bus Type:</strong> ${details.busType}</p>` : ""}
+                ${details.travelClass ? `<p><strong>Class:</strong> ${details.travelClass}</p>` : ""}
+                <p><strong>Fare:</strong> ₹${details.fare}</p>
+                <p><strong>Phone:</strong> ${details.phone}</p>
+                ${passengersHTML}
+                ${childrenHTML}
+              `;
+            }
+            
+          // 🔹 Add cancellation button/status display here
+          if (!entry.status || entry.status === "confirmed") {
+            div.innerHTML += `
+              <button class="cancel-btn" onclick="cancelBooking('${entry._id}', event)">❌ Cancel Booking</button>
+            `;
+          } else if (entry.status === "cancellation_pending") {
+            div.innerHTML += `<h3 class="cancellation-status" style="color:orange;">Processing Cancellation...</h3>`;
+          } else if (entry.status === "cancelled") {
+            div.style.opacity = "0.6";
+            div.style.position = "relative";
+            div.innerHTML = `<div style="position:absolute;top:10px;left:10px;
+              background:#e74c3c;color:white;padding:4px 8px;border-radius:6px;
+              font-weight:bold;">CANCELLED</div>` + div.innerHTML;
+          } else if (entry.status === "cancel_rejected") {
+            div.innerHTML += `<p style="color:#e74c3c;font-weight:bold;margin-top:10px;">
+              ❌ Cancellation Rejected
+            </p>`;
+          }
+
+            container.appendChild(div);
+          });
+        })
+        .catch(err => {
+          console.error("Error fetching history:", err);
+          container.innerHTML = "<p>Error fetching history.</p>";
+        });
+    });
+
+    function cancelBooking(bookingId, event) {
+      if (confirm("Do you want to cancel this booking?")) {
+        const card = event.target.closest(".history-card");
+
+        // Remove cancel button so it cannot be clicked again
+        const btn = card.querySelector(".cancel-btn");
+        if (btn) btn.remove();
+
+        // Add or update cancellation status
+        let statusEl = card.querySelector(".cancellation-status");
+        if (!statusEl) {
+          statusEl = document.createElement("h3");
+          statusEl.className = "cancellation-status";
+          statusEl.style.color = "orange";
+          statusEl.textContent = "Processing Cancellation...";
+          card.appendChild(statusEl);
+        }
+
+        // Send request to backend
+        fetch('/request-cancellation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ bookingId })
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log("Cancellation requested:", data);
+          // optional: update status based on backend response
+          if (!data.success) {
+            statusEl.textContent = "❌ Could not request cancellation.";
+            statusEl.style.color = "red";
+          }
+        })
+        .catch(err => {
+          console.error("Error requesting cancellation:", err);
+          statusEl.textContent = "❌ Could not request cancellation.";
+          statusEl.style.color = "red";
+        });
+      }
+    }
+  </script>
+</body>
+</html>

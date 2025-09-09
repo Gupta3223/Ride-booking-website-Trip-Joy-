@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bus Seat Booking</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f0f0f0;
+      padding: 40px 20px;
+    }
+
+    .bus-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .bus-container h1 {
+      margin-bottom: 20px;
+      color: orangered;
+    }
+
+    .bus-layout {
+      display: grid;
+      grid-template-columns: repeat(5, 60px);
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .seat {
+      width: 60px;
+      height: 60px;
+      background: #ccc;
+      border-radius: 8px;
+      text-align: center;
+      line-height: 60px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .seat.selected {
+      background: green;
+      color: white;
+    }
+
+    .seat.booked {
+      background: #888;
+      color: white;
+      cursor: not-allowed;
+    }
+
+    .seat.blank {
+      background: transparent;
+      pointer-events: none;
+    }
+
+    .selected-seats {
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .proceed-btn {
+      background: orangered;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .proceed-btn:hover {
+      background: #d14000;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bus-container">
+    <h1>Select Your Bus Seat</h1>
+    <div class="bus-layout" id="busLayout">
+      <!-- Seat layout generated here -->
+    </div>
+    <div class="selected-seats">Selected Seats: <span id="selectedSeats">None</span></div>
+    <button class="proceed-btn" onclick="proceedToNext()">Proceed</button>
+  </div>
+
+  <script>
+  const busLayout = document.getElementById("busLayout");
+  const selectedSeatsDisplay = document.getElementById("selectedSeats");
+  const totalSeats = 40;
+  const seatsPerRow = 4;
+  let selectedSeats = [];
+
+  // Get how many seats user booked from localStorage
+  const maxSelectableSeats = parseInt(localStorage.getItem("seatsBooked")) || 0;
+
+  for (let i = 1; i <= totalSeats;) {
+    // Left 2 seats
+    for (let j = 0; j < 2; j++) {
+      if (i <= totalSeats) {
+        const seat = document.createElement("div");
+        seat.className = "seat";
+        seat.textContent = i;
+        seat.dataset.seatNumber = i;
+        seat.addEventListener("click", toggleSeat);
+        busLayout.appendChild(seat);
+        i++;
+      }
+    }
+
+    // Aisle
+    const aisle = document.createElement("div");
+    aisle.className = "seat blank";
+    busLayout.appendChild(aisle);
+
+    // Right 2 seats
+    for (let j = 0; j < 2; j++) {
+      if (i <= totalSeats) {
+        const seat = document.createElement("div");
+        seat.className = "seat";
+        seat.textContent = i;
+        seat.dataset.seatNumber = i;
+        seat.addEventListener("click", toggleSeat);
+        busLayout.appendChild(seat);
+        i++;
+      }
+    }
+  }
+
+  function toggleSeat(e) {
+    const seat = e.target;
+    const seatNum = seat.dataset.seatNumber;
+
+    if (seat.classList.contains("booked")) return;
+
+    if (seat.classList.contains("selected")) {
+      seat.classList.remove("selected");
+      selectedSeats = selectedSeats.filter(num => num !== seatNum);
+    } else {
+      if (selectedSeats.length >= maxSelectableSeats) {
+        alert(`You can only select ${maxSelectableSeats} seat(s).`);
+        return;
+      }
+      seat.classList.add("selected");
+      selectedSeats.push(seatNum);
+    }
+
+    selectedSeatsDisplay.textContent = selectedSeats.length
+      ? selectedSeats.join(", ")
+      : "None";
+  }
+
+  function proceedToNext() {
+    if (selectedSeats.length !== maxSelectableSeats) {
+      alert(`Please select exactly ${maxSelectableSeats} seat(s).`);
+      return;
+    }
+
+    localStorage.setItem("selectedBusSeats", JSON.stringify(selectedSeats));
+    window.location.href = "bus-payment.html";
+  }
+</script>
+
+</body>
+</html>

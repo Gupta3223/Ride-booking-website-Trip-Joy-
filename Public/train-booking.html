@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Booking - TripJoy ride</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+      .hidden-passenger {
+        display: none;
+      }
+    </style>
+  </head>
+<body>
+
+  <nav class="navbar">
+    <h2 class="logo">
+        <img src="logo.jpg" alt="RideBooking Logo">
+    </h2>
+    <ul>
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="index.html#about">About Us</a></li>
+        <li><a href="index.html#help">Help</a></li>
+        <li><button class="login-btn" onclick="openLoginModal()">Login</button></li>
+    </ul>
+</nav>
+<div class="container">
+
+  <!-- Journey Details -->
+  <div class="section">
+    <h2>Journey Details</h2>
+    <table>
+      <tr>
+        <td>Train No./Name:</td>
+        <td><strong id="train-name">12952 / MUMBAI RAJDHANI</strong></td>
+        <td>Journey Date:</td>
+        <td><input type="date" id="journey-date" required></td>
+      </tr>
+      <tr>
+        <td>From Station:</td>
+        <td id="from-station">NEW DELHI - NDLS</td>
+        <td>To Station:</td>
+        <td id="to-station">MUMBAI CENTRAL - BCT</td>
+      </tr>
+      <tr>
+        <td>Boarding Station:</td>
+        <td id="boarding-station">NEW DELHI - NDLS</td>
+        <td>Reservation Upto Station:</td>
+        <td id="upto-station">MUMBAI CENTRAL - BCT</td>
+      </tr>
+      <tr>
+        <td>Departure Time:</td>
+        <td id="departure-time">--</td>
+        <td>Arrival Time:</td>
+        <td id="arrival-time">--</td>
+      </tr>
+      <tr>
+        <td>Arrival Date:</td>
+        <td id="arrival-date">--</td>
+      </tr>
+      <tr>
+        <td>Class:</td>
+        <td id="class-display">--</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Passenger Details -->
+  <div class="section">
+    <h2>Passenger Details</h2>
+    <table id="passenger-table">
+      <thead>
+        <tr>
+          <th>Sl No</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Berth Preference</th>
+          <th>Meal</th>
+          <th>Senior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- passengers Detail -->
+        <tr><td>1</td><td><input type="text" name="name1"></td><td><input type="number" name="age1"></td><td><select name="gender1"><option>Select</option><option>Male</option><option>Female</option></select></td><td><select name="berth1"><option>No Preference</option><option>Lower</option><option>Middle</option><option>Upper</option><option>Side Lower</option><option>Side Upper</option></select></td><td><select name="meal1"><option>Select</option><option>Veg</option><option>Non-Veg</option></select></td><td><input type="checkbox" name="senior1"></td></tr>
+
+        <tr class="hidden-passenger"><td>2</td><td><input type="text" name="name2"></td><td><input type="number" name="age2"></td><td><select name="gender2"><option>Select</option><option>Male</option><option>Female</option></select></td><td><select name="berth2"><option>No Preference</option><option>Lower</option><option>Middle</option><option>Upper</option><option>Side Lower</option><option>Side Upper</option></select></td><td><select name="meal2"><option>Select</option><option>Veg</option><option>Non-Veg</option></select></td><td><input type="checkbox" name="senior2"></td></tr>
+
+        <tr class="hidden-passenger"><td>3</td><td><input type="text" name="name3"></td><td><input type="number" name="age3"></td><td><select name="gender3"><option>Select</option><option>Male</option><option>Female</option></select></td><td><select name="berth3"><option>No Preference</option><option>Lower</option><option>Middle</option><option>Upper</option><option>Side Lower</option><option>Side Upper</option></select></td><td><select name="meal3"><option>Select</option><option>Veg</option><option>Non-Veg</option></select></td><td><input type="checkbox" name="senior3"></td></tr>
+
+        <tr class="hidden-passenger"><td>4</td><td><input type="text" name="name4"></td><td><input type="number" name="age4"></td><td><select name="gender4"><option>Select</option><option>Male</option><option>Female</option></select></td><td><select name="berth4"><option>No Preference</option><option>Lower</option><option>Middle</option><option>Upper</option><option>Side Lower</option><option>Side Upper</option></select></td><td><select name="meal4"><option>Select</option><option>Veg</option><option>Non-Veg</option></select></td><td><input type="checkbox" name="senior4"></td></tr>
+
+        <tr class="hidden-passenger"><td>5</td><td><input type="text" name="name5"></td><td><input type="number" name="age5"></td><td><select name="gender5"><option>Select</option><option>Male</option><option>Female</option></select></td><td><select name="berth5"><option>No Preference</option><option>Lower</option><option>Middle</option><option>Upper</option><option>Side Lower</option><option>Side Upper</option></select></td><td><select name="meal5"><option>Select</option><option>Veg</option><option>Non-Veg</option></select></td><td><input type="checkbox" name="senior5"></td></tr>
+
+        <tr class="hidden-passenger"><td>6</td><td><input type="text" name="name6"></td><td><input type="number" name="age6"></td><td><select name="gender6"><option>Select</option><option>Male</option><option>Female</option></select></td><td><select name="berth6"><option>No Preference</option><option>Lower</option><option>Middle</option><option>Upper</option><option>Side Lower</option><option>Side Upper</option></select></td><td><select name="meal6"><option>Select</option><option>Veg</option><option>Non-Veg</option></select></td><td><input type="checkbox" name="senior6"></td></tr>
+      </tbody>
+    </table>
+    <button type="button" onclick="addPassengerRow()"><i class="fa fa-plus"></i> Add Passenger</button>
+    <button type="button" onclick="resetPassengers()">Reset Passenger Details</button>
+  </div>
+
+  <!-- Children Details -->
+  <div class="section">
+    <h2>Children Below 5 Years</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Sl No</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><input type="text" name="childName1"></td><td><input type="number" name="childAge1" max="5" class="child-age"></td><td><select name="childGender1"><option>Select</option><option>Male</option><option>Female</option></select></td></tr>
+        <tr><td>2</td><td><input type="text" name="childName2"></td><td><input type="number" name="childAge2" max="5" class="child-age"></td><td><select name="childGender2"><option>Select</option><option>Male</option><option>Female</option></select></td></tr>
+      </tbody>
+    </table>
+    <button type="button" onclick="resetChildren()">Reset Child Details</button>
+  </div>
+
+  <!-- Options -->
+  <div class="options">
+    <h3>Consider for Auto Upgradation</h3>
+    <input type="checkbox" id="auto-upgrade"> Yes<br><br>
+
+    <h3>Book only if confirm berths are allotted</h3>
+    <input type="radio" name="confirm" value="none" checked> None<br>
+    <input type="radio" name="confirm" value="sameCoach"> Same Coach<br>
+    <input type="radio" name="confirm" value="oneLower"> At least 1 Lower Berth<br>
+    <input type="radio" name="confirm" value="twoLower"> 2 Lower Berths<br>
+  </div>
+
+  <div>
+    Mobile Number: <input type="tel" name="mobile" required placeholder="Enter mobile number">
+  </div>
+
+  <script>
+    let trainData = JSON.parse(localStorage.getItem("selectedTrain"));
+
+    window.addEventListener("DOMContentLoaded", function () {
+      const journeyDate = localStorage.getItem("journeyDate"); // you already saved this separately
+      
+      if (trainData) {
+        document.getElementById("train-name").innerText = `${trainData.trainNumber} / ${trainData.trainName}`;
+        document.getElementById("from-station").innerText = `${trainData.from}`;
+        document.getElementById("to-station").innerText = `${trainData.to}`;
+        document.getElementById("boarding-station").innerText = `${trainData.from}`; // assuming boarding = source
+        document.getElementById("upto-station").innerText = `${trainData.to}`; // assuming reservation upto = destination
+
+        // Set the travel class - OPTIONAL: You can display it somewhere if needed
+        const classElement = document.querySelector("#class-display");
+        if (classElement && trainData.selectedClass) {
+          classElement.innerText = trainData.selectedClass.toUpperCase();
+        }
+      }
+
+      if (journeyDate) {
+        document.getElementById("journey-date").value = journeyDate;
+      }
+    });
+
+    window.addEventListener("DOMContentLoaded", function () {
+      const journeyDateInput = document.getElementById("journey-date");
+
+      function calculateArrival(train, journeyDateStr) {
+        if (!train || !journeyDateStr) return;
+
+        const [depHour, depMinute, depPeriod] = train.departure.match(/(\d+):(\d+) (\wM)/).slice(1);
+        let depHour24 = parseInt(depHour);
+        if (depPeriod.toLowerCase() === 'pm' && depHour24 !== 12) depHour24 += 12;
+        if (depPeriod.toLowerCase() === 'am' && depHour24 === 12) depHour24 = 0;
+
+        const [durHour, durMinute] = train.duration.match(/(\d+)h (\d+)m/).slice(1).map(Number);
+
+        const journeyDate = new Date(journeyDateStr);
+        journeyDate.setHours(depHour24, parseInt(depMinute), 0, 0);
+
+        // Add duration
+        const arrivalDate = new Date(journeyDate.getTime() + durHour * 60 * 60 * 1000 + durMinute * 60 * 1000);
+
+        // Format back to 12-hour with AM/PM
+        function format12Hour(date) {
+          let hours = date.getHours();
+          const minutes = date.getMinutes();
+          const ampm = hours >= 12 ? 'PM' : 'AM';
+          hours = hours % 12;
+          if (hours === 0) hours = 12;
+          return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+        }
+
+        document.getElementById("departure-time").innerText = train.departure;
+        document.getElementById("arrival-time").innerText = format12Hour(arrivalDate);
+        document.getElementById("arrival-date").innerText = arrivalDate.toLocaleDateString();
+      }
+
+      if (trainData && journeyDateInput.value) {
+        calculateArrival(trainData, journeyDateInput.value);
+      }
+
+      // Update arrival if journey date is changed
+      journeyDateInput.addEventListener("change", () => {
+        if (trainData) calculateArrival(trainData, journeyDateInput.value);
+      });
+    });
+  </script>
+
+  <script>
+    // ✅ Child age validation (must be 5 or below)
+    const childAgeInputs = document.querySelectorAll('.child-age');
+    childAgeInputs.forEach(input => {
+      input.addEventListener('input', function () {
+        const age = parseInt(this.value);
+        if (age > 5) {
+          alert("⚠️ Age must be 5 or below for a child.");
+          this.value = ""; // clear invalid input
+        }
+      });
+    });
+  </script>
+
+  <script>
+    function resetPassengers() {
+      document.querySelectorAll("#passenger-table input, #passenger-table select").forEach(el => el.value = "");
+    }
+    function resetChildren() {
+      document.querySelectorAll("tbody input, tbody select").forEach(el => el.value = "");
+    }
+  </script>
+
+  <script>
+    function addPassengerRow() {
+      const rows = document.querySelectorAll('#passenger-table tbody tr');
+      let lastVisibleIndex = -1;
+
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i].style.display !== 'none') {
+          lastVisibleIndex = i;
+        } else {
+          break;
+        }
+      }
+
+      const currentRow = rows[lastVisibleIndex];
+      const inputs = currentRow.querySelectorAll('input, select');
+      for (let input of inputs) {
+        if ((input.type === 'text' || input.tagName === 'SELECT' || input.type === 'number') && !input.value) {
+          alert('Please fill all fields of current passenger before adding a new one.');
+          return;
+        }
+      }
+
+      const nextRow = rows[lastVisibleIndex + 1];
+      if (nextRow) {
+        nextRow.classList.remove('hidden-passenger');
+        nextRow.style.display = '';
+      } else {
+        alert("You can't add more than 6 passengers.");
+      }
+    }
+
+    // Initial load: show only first row
+    window.addEventListener('DOMContentLoaded', () => {
+      const rows = document.querySelectorAll('#passenger-table tbody tr');
+      rows.forEach((row, i) => {
+        row.style.display = i === 0 ? '' : 'none';
+      });
+    });
+  </script>
+
+  <script>
+    function saveBookingDetails() {
+      localStorage.setItem('rideType', 'train');
+
+      const selectedTrain = JSON.parse(localStorage.getItem('selectedTrain')) || {};
+      const selectedClass = document.getElementById('class-display').innerText.trim();
+
+      if (!selectedClass) {
+        alert("Class not selected or missing.");
+        return;
+      }
+
+      selectedTrain.selectedClass = selectedClass;
+      localStorage.setItem('selectedTrain', JSON.stringify(selectedTrain));
+
+      localStorage.setItem('trainName', document.getElementById('train-name').innerText);
+      localStorage.setItem('fromStation', document.getElementById('from-station').innerText);
+      localStorage.setItem('toStation', document.getElementById('to-station').innerText);
+      localStorage.setItem('journeyDate', document.getElementById('journey-date').value);
+      
+      const departureTime = document.getElementById('departure-time').innerText;
+      const arrivalTime = document.getElementById('arrival-time').innerText;
+      const arrivalDate = document.getElementById('arrival-date').innerText;
+
+      localStorage.setItem('departureTime', departureTime);
+      localStorage.setItem('arrivalTime', arrivalTime);
+      localStorage.setItem('arrivalDate', arrivalDate);
+
+      let farePayingPassengerCount = 0;
+
+      // Count valid paying passengers (age >= 5)
+      const rows = document.querySelectorAll('#passenger-table tbody tr');
+      rows.forEach((row, index) => {
+        if (row.style.display !== 'none') {
+          const name = row.querySelector(`input[name=name${index + 1}]`)?.value.trim();
+          const age = parseInt(row.querySelector(`input[name=age${index + 1}]`)?.value);
+
+          if (name && !isNaN(age) && age >= 5) {
+            farePayingPassengerCount++;
+          }
+        }
+      });
+
+      // Get fare from selectedTrain.classes
+      let farePerPassenger = 0;
+      const classKey = Object.keys(selectedTrain.classes || {}).find(
+        key => key.trim().toLowerCase() === selectedClass.trim().toLowerCase()
+      );
+
+      if (classKey && selectedTrain.classes[classKey] && !isNaN(parseInt(selectedTrain.classes[classKey].fare))) {
+        farePerPassenger = parseInt(selectedTrain.classes[classKey].fare);
+      } else {
+        alert("Fare not found for selected class: " + selectedClass + 
+              "\nAvailable classes: " + Object.keys(selectedTrain.classes || {}).join(", "));
+        return;
+      }
+
+      const totalFare = farePerPassenger * farePayingPassengerCount;
+
+      // Save to localStorage
+      localStorage.setItem('farePerPassenger', farePerPassenger);
+      localStorage.setItem('passengerCount', farePayingPassengerCount);
+      localStorage.setItem('totalFare', totalFare);
+
+      const passengerList = [];
+      rows.forEach((row, index) => {
+        if (row.style.display !== 'none') {
+          const name = row.querySelector(`input[name=name${index + 1}]`)?.value.trim();
+          const age = parseInt(row.querySelector(`input[name=age${index + 1}]`)?.value);
+          const gender = row.querySelector(`select[name=gender${index + 1}]`)?.value;
+          if (name && !isNaN(age)) {
+            passengerList.push({ name, age, gender });
+          }
+        }
+      });
+
+      localStorage.setItem('passengerList', JSON.stringify(passengerList));
+
+      const phoneInput = document.querySelector('input[name=mobile]');
+      if (phoneInput && phoneInput.value.trim()) {
+        localStorage.setItem('phoneNumber', phoneInput.value.trim());
+      } else {
+        alert("Please enter your mobile number.");
+        return; // prevent navigation without phone number
+      }
+
+      // ✅ Final check output (optional)
+      console.log({
+        farePerPassenger,
+        farePayingPassengerCount,
+        totalFare
+      });
+
+      // Save children under 5 details
+      const children = [];
+
+      for (let i = 1; i <= 2; i++) {
+        const name = document.querySelector(`input[name=childName${i}]`)?.value.trim();
+        const age = parseInt(document.querySelector(`input[name=childAge${i}]`)?.value);
+        const gender = document.querySelector(`select[name=childGender${i}]`)?.value;
+
+        if (name && !isNaN(age) && age <= 5 && gender !== 'Select') {
+          children.push({ name, age, gender });
+        }
+      }
+
+      localStorage.setItem('childrenUnder5', JSON.stringify(children));
+
+      // Redirect to payment page
+      window.location.href = 'train-payment.html';
+    }
+  </script>
+
+
+  <!-- Buttons -->
+  <div class="actions">
+    <button type="button" onclick="saveBookingDetails()">Next</button>
+    <button type="button" onclick="location.reload()">Replan</button>
+  </div>
+
+</div>
+
+</body>
+</html>

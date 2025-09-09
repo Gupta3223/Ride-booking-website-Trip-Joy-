@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Finding Driver - TripJoy Ride</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Finding a Driver for Your Ride...</h2>
+    <div class="ride-summary">
+      <p><strong>From:</strong> <span id="pickupDisplay"></span></p>
+      <p><strong>To:</strong> <span id="dropDisplay"></span></p>
+      <p><strong>Fare:</strong> ₹<span id="fareDisplay"></span></p>
+    </div>
+
+    <div class="loader" id="loader"></div>
+
+    <div class="driver-info" id="driverInfo">
+      <h3>✅ Ride Confirmed!</h3>
+      <p><strong>Captain:</strong> <span id="driverName"></span></p>
+      <p><strong>Vehicle:</strong> <span id="vehicle"></span></p>
+      <p><strong>Phone:</strong> <span id="driverPhone"></span></p>
+      <br>
+      <button onclick="window.location.href='cab-payment.html'">Confirm Ride</button>
+    </div>
+  </div>
+
+  <script>
+    const pickup = localStorage.getItem("pickup");
+    const drop = localStorage.getItem("drop");
+    const fare = localStorage.getItem("finalFare");
+    const selectedCabType = (localStorage.getItem("cabType") || "bike").toLowerCase();
+
+    document.getElementById("pickupDisplay").innerText = pickup;
+    document.getElementById("dropDisplay").innerText = drop;
+    document.getElementById("fareDisplay").innerText = fare;
+
+    const driverInfo = document.getElementById("driverInfo");
+    const loader = document.getElementById("loader");
+
+    setTimeout(async () => {
+      loader.style.display = "none";
+      driverInfo.style.display = "block";
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/driver/${selectedCabType}`);
+        const driver = await res.json();
+
+        console.log("Driver fetched:", driver);
+
+        if (!res.ok || !driver.firstName) {
+          document.getElementById("driverName").textContent = "No driver available";
+          document.getElementById("vehicle").textContent = "-";
+          document.getElementById("driverPhone").textContent = "-";
+          return;
+        }
+
+        const fullName = `${driver.firstName} ${driver.lastName}`;
+        const vehicleType = driver.type ? driver.type.toUpperCase() : "CAB";
+        const vehiclePlate = driver.numberPlate || "NA";
+        const vehicleDisplay = `${vehicleType} - ${vehiclePlate}`;
+
+        document.getElementById("driverName").textContent = fullName;
+        document.getElementById("vehicle").textContent = vehicleDisplay;
+        document.getElementById("driverPhone").textContent = driver.phone || "NA";
+
+        // Store driver info & OTP
+        const otp = Math.floor(1000 + Math.random() * 9000);
+        localStorage.setItem("rideOTP", otp);
+        localStorage.setItem("driverName", fullName);
+        localStorage.setItem("vehicleNumber", vehiclePlate);
+        localStorage.setItem("vehicleType", vehicleType);
+        localStorage.setItem("driverContact", driver.phone || "NA");
+
+      } catch (err) {
+        console.error("Error fetching driver:", err);
+        document.getElementById("driverName").textContent = "Error fetching driver";
+        document.getElementById("vehicle").textContent = "-";
+        document.getElementById("driverPhone").textContent = "-";
+      }
+    }, 3500);
+  </script>
+</body>
+</html>
